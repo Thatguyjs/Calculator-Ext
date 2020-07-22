@@ -1,0 +1,166 @@
+/* Copyright (c) 2020 Thatguyjs All Rights Reserved. */
+
+
+:root {
+	--calc-background: rgb(52, 52, 52);
+
+	--num-button: rgb(65, 65, 65);
+	--op-button: rgb(77, 77, 77);
+	--fn-button: rgb(90, 90, 90);
+	--eval-button: rgb(70, 82, 95);
+
+	--num-text: rgb(165, 165, 165);
+	--op-text: rgb(170, 170, 170);
+	--fn-text: rgb(180, 180, 180);
+	--eval-text: rgb(190, 190, 190);
+
+	--text-active: rgb(240, 240, 240);
+}
+
+
+body {
+	margin: 0;
+
+	width: 440px;
+	height: 254px;
+
+	background: var(--calc-background);
+}
+
+
+.hidden {
+	display: none;
+}
+
+
+#input {
+	margin: 6px;
+	margin-bottom: 0;
+	padding: 0 8px 0 0;
+
+	width: calc(100% - 20px);
+	height: 32px;
+
+	font-size: 15px;
+	font-family: monospace;
+	text-align: right;
+	letter-spacing: 1.6px;
+
+	border-radius: 4px;
+	border: none;
+	outline: none;
+}
+
+
+#history-dropdown {
+	position: absolute;
+	left: 12px;
+	top: 9px;
+
+	width: 26px;
+	height: 26px;
+
+	border-radius: 3px;
+
+	cursor: pointer;
+
+	transition: background 0.15s;
+}
+#history-dropdown:hover {
+	background: rgb(216, 216, 216);
+}
+
+#history-dropdown svg {
+	margin: 1px 0 0 1px;
+
+	width: 23px;
+	height: 23px;
+
+	fill: rgb(120, 120, 120);
+}
+
+
+#buttons {
+	width: 100%;
+	height: calc(100% - 38px);
+
+	border-spacing: 5px;
+}
+#buttons td {
+	padding: 0;
+
+	width: 14%;
+	height: calc(20% - 5px);
+
+	text-align: center;
+	font-family: arial;
+	font-size: 14px;
+
+	border-radius: 3px;
+
+	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
+}
+#buttons td:hover {
+	filter: brightness(1.15);
+}
+
+.number {
+	background: var(--num-button);
+	color: var(--num-text);
+}
+
+.function {
+	background: var(--fn-button);
+	color: var(--fn-text);
+}
+
+.operator {
+	background: var(--op-button);
+	color: var(--op-text);
+}
+
+.eval {
+	background: var(--eval-button);
+	color: var(--eval-text);
+}
+
+.rotate-type {
+	position: relative;
+	display: flex;
+
+	width: 100%;
+}
+
+.rotate-radians, .rotate-degrees {
+	width: 50%;
+	height: 100%;
+
+	background: var(--fn-button);
+
+	cursor: pointer;
+}
+
+.rotate-radians {
+	float: left;
+}
+.rotate-type .selected {
+	color: var(--text-active);
+}
+
+.rotate-degrees {
+	float: right;
+}
+
+.rotate-bar {
+	position: absolute;
+
+	top: 0;
+	left: calc(50% - 1px);
+
+	width: 2px;
+	height: 100%;
+
+	background: grey;
+}

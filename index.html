@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<!-- Copyright (c) 2020 Thatguyjs All Rights Reserved. -->
+
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>Calculator</title>
+
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div id="input-area">
+			<input id="input"></input>
+
+			<div id="history-dropdown">
+				<svg id="history-toggle" viewBox="0 0 24 24">
+					<path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0
+					-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94
+					-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9
+					s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+				</svg>
+
+				<div id="history-entries" class="hidden"></div>
+			</div>
+		</div>
+
+		<table id="buttons">
+			<tr>
+				<td class="function modifier" colspan="2">
+					<div class="rotate-type">
+						<div class="rotate-radians">Rad</div>
+						<div class="rotate-bar"></div>
+						<div class="rotate-degrees selected">Deg</div>
+					</div>
+				</td>
+				<td class="function modifier">Inv</td>
+				<td class="operator">^</td>
+				<td class="operator">(</td>
+				<td class="operator">)</td>
+				<td class="function">CE</td>
+			</tr>
+			<tr>
+				<td class="function">sin</td>
+				<td class="function">cos</td>
+				<td class="function">tan</td>
+				<td class="operator">*</td>
+				<td class="number">7</td>
+				<td class="number">8</td>
+				<td class="number">9</td>
+			</tr>
+			<tr>
+				<td class="function">log</td>
+				<td class="function">ln</td>
+				<td class="function">x!</td>
+				<td class="operator">/</td>
+				<td class="number">4</td>
+				<td class="number">5</td>
+				<td class="number">6</td>
+			</tr>
+			<tr>
+				<td class="function">sqrt</td>
+				<td class="function">cbrt</td>
+				<td class="function">EXP</td>
+				<td class="operator">-</td>
+				<td class="number">1</td>
+				<td class="number">2</td>
+				<td class="number">3</td>
+			</tr>
+			<tr>
+				<td class="function">π</td>
+				<td class="function">e</td>
+				<td class="function">Ans</td>
+				<td class="operator">+</td>
+				<td class="number">0</td>
+				<td class="number">.</td>
+				<td class="eval" id="equals">=</td>
+			</tr>
+		</table>
+
+
+		<script src="calculate/stack.js"></script>
+		<script src="calculate/calculate.js"></script>
+		<script src="calculate/addons.js"></script>
+
+		<script src="main.js"></script>
+	</body>
+</html>
