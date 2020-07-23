@@ -16,7 +16,6 @@ const Calculator = {
 	_errorMessages: [
 		null,
 		"Unexpected input",
-		"Missing parenthesis",
 		"Invalid operation",
 		"Invalid node"
 	],
@@ -42,7 +41,7 @@ const Calculator = {
 
 	// Check if a character is an operator
 	_isOperator: function(char) {
-		return '+-*/%^!'.includes(char);
+		return '+-*/%^E'.includes(char);
 	},
 
 
@@ -51,7 +50,6 @@ const Calculator = {
 		let part = string.slice(start);
 
 		if(part.indexOf('(') === -1) {
-			this._error = 2;
 			return false;
 		}
 
@@ -79,7 +77,8 @@ const Calculator = {
 			'+': 1, '-': 1,
 			'*': 2, '/': 2, '%': 2,
 			'^': 3,
-			'!': 4
+			'!': 4,
+			'E': 5
 		}[op];
 	},
 
@@ -96,26 +95,13 @@ const Calculator = {
 		const length = expr.length;
 		let ind = 0;
 
-		while(ind < length) {
+		while(!this._error && ind < length) {
 
 			// Negatives
 			if(expr[ind] === '-' && !lastExpr) {
-				let nodeString = "";
-				let depth = 0;
+				numStack.push({ type: 'number', value: 0 });
+				opStack.push('-');
 
-				while(++ind < length && ((!this._isOperator(expr[ind]) && expr[ind] !== ')') || depth)) {
-					if(expr[ind] === '(') depth++;
-					else if(expr[ind] === ')') depth--;
-
-					nodeString += expr[ind];
-				}
-
-				numStack.push({
-					type: 'negative',
-					value: this._toPrefix(nodeString)
-				});
-
-				ind--;
 				lastExpr = true;
 			}
 
@@ -135,15 +121,48 @@ const Calculator = {
 
 			// Postfix operators
 			else if(this._isPostfix(expr[ind])) {
-				opStack.push(expr[ind]);
-				numStack.push({ type: 'none' });
+				if(!numStack.length) {
+					this._error = 2;
+					break;
+				}
+
+				while(opStack.length && this._getPrecedence(expr[ind]) <= this._getPrecedence(opStack.top)) {
+					if(numStack.length < 2) {
+						this._error = 2;
+						break;
+					}
+
+					let values = [numStack.pop(), numStack.pop()];
+
+					numStack.push({
+						type: 'operator',
+						value: opStack.pop(),
+						params: values.reverse()
+					});
+				}
+
+				numStack.push({
+					type: 'postfix',
+					value: expr[ind],
+					params: numStack.pop()
+				});
 
 				lastExpr = true;
 			}
 
 			// Operators
 			else if(this._isOperator(expr[ind])) {
+				if(!numStack.length) {
+					this._error = 2;
+					break;
+				}
+
 				while(opStack.length && this._getPrecedence(expr[ind]) <= this._getPrecedence(opStack.top)) {
+					if(numStack.length < 2) {
+						this._error = 2;
+						break;
+					}
+
 					let values = [numStack.pop(), numStack.pop()];
 
 					numStack.push({
@@ -165,6 +184,11 @@ const Calculator = {
 
 			else if(expr[ind] === ')') {
 				while(opStack.length && opStack.top !== '(') {
+					if(numStack.length < 2) {
+						this._error = 2;
+						break;
+					}
+
 					let values = [numStack.pop(), numStack.pop()];
 
 					numStack.push({
@@ -246,11 +270,11 @@ const Calculator = {
 	_operate: function(n1, op, n2) {
 		switch(op) {
 
-			// Postfix operations
+			// Postfix operators
 
 			case '!':
 				if(n1 < 0) {
-					this._error = 3;
+					this._error = 2;
 					return 0;
 				}
 
@@ -259,7 +283,7 @@ const Calculator = {
 			return n1;
 
 
-			// Normal operations
+			// Normal operators
 
 			case '+':
 			return n1 + n2;
@@ -279,8 +303,11 @@ const Calculator = {
 			case '^':
 			return n1 ** n2;
 
+			case 'E':
+			return n1 * (10 ** n2);
+
 			default:
-				this._error = 3;
+				this._error = 2;
 				return 0;
 
 		}
@@ -289,7 +316,7 @@ const Calculator = {
 
 	// Parse part of an AST
 	_parseNode: function(node) {
-		if(!node && !this._error) this._error = 4;
+		if(!node && !this._error) this._error = 3;
 		if(this._error) return null;
 
 		switch(node.type) {
@@ -299,6 +326,13 @@ const Calculator = {
 
 			case 'negative':
 			return -this._parseNode(node.value);
+
+			case 'postfix':
+			return this._operate(
+				this._parseNode(node.params),
+				node.value,
+				null
+			);
 
 			case 'operator':
 			return this._operate(
@@ -315,7 +349,7 @@ const Calculator = {
 			return null;
 
 			default:
-				this._error = 4;
+				this._error = 3;
 				return 0;
 
 		}
