@@ -3,6 +3,18 @@ A calculator extension for Chrome
 
 ## Supported Features
 
+### Operators
+| Operator | Name                  |
+|----------|-----------------------|
+|    \+    |  Add                  |
+|    \-    |  Subtract             |
+|    \*    |  Multiply             |
+|    /     |  Divide               |
+|    %     |  Modulus              |
+|    ^     |  Exponent             |
+|    !     |  Factorial            |
+|    E     |  Scientific Notation  |
+
 ### Constants
 - pi
 - e
