@@ -35,7 +35,7 @@ function evalInput() {
 	if(result.error) {
 		input.value = Calculator.getError(result.error);
 	}
-	else if(result.value && input.value !== result.value.toString()) {
+	else if(input.value !== result.value.toString()) {
 		CalcHistory.store(input.value, result);
 		CalcHistory.storeActive(result.value);
 

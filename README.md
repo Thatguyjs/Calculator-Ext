@@ -27,8 +27,11 @@ A calculator extension for Chrome
 - floor (round down)
 - round (round to nearest whole number)
 - ceil (round up)
-- sin
-- cos
-- tan
+- sin / asin
+- cos / acos
+- tan / atan
 - log (logarithm)
 - ln (natural logarithm)
+
+### Other
+- Supports both degree (deg) and radian (rad) modes

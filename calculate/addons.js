@@ -42,15 +42,33 @@ Calculator.addFunction('ceil', (value) => {
 
 
 Calculator.addFunction('sin', (value) => {
+	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 	return Math.sin(value);
 });
 
+Calculator.addFunction('asin', (value) => {
+	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+	return Math.asin(value) * mult;
+});
+
 Calculator.addFunction('cos', (value) => {
-	return Math.tan(value);
+	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+	return Math.cos(value);
+});
+
+Calculator.addFunction('acos', (value) => {
+	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+	return Math.acos(value) * mult;
 });
 
 Calculator.addFunction('tan', (value) => {
+	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 	return Math.tan(value);
+});
+
+Calculator.addFunction('atan', (value) => {
+	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+	return Math.atan(value) * mult;
 });
 
 

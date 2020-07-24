@@ -28,22 +28,22 @@
 		<table id="buttons">
 			<tr>
 				<td class="function modifier" name="angle" colspan="2">
-					<div class="rotate-type">
+					<div class="rotate-type" data-active="degrees">
 						<div class="rotate-radians">Rad</div>
 						<div class="rotate-bar"></div>
 						<div class="rotate-degrees selected">Deg</div>
 					</div>
 				</td>
 				<td class="function modifier" name="invert">Inv</td>
-				<td class="operator">^</td>
+				<td class="operator" data-inverse="%">^</td>
 				<td class="operator">(</td>
 				<td class="operator">)</td>
 				<td class="function modifier" name="clear">CE</td>
 			</tr>
 			<tr>
-				<td class="function">sin</td>
-				<td class="function">cos</td>
-				<td class="function">tan</td>
+				<td class="function" data-inverse="asin">sin</td>
+				<td class="function" data-inverse="acos">cos</td>
+				<td class="function" data-inverse="atan">tan</td>
 				<td class="operator">*</td>
 				<td class="number">7</td>
 				<td class="number">8</td>
@@ -84,7 +84,7 @@
 		<script src="calculate/addons.js"></script>
 
 		<script src="history.js"></script>
-		<script src="input.js"></script>
+		<script src="buttons.js"></script>
 		<script src="main.js"></script>
 	</body>
 </html>
