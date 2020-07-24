@@ -1,2 +1,8 @@
 # Old expression / parsing methods
 calculate/calculate_old.js
+
+# GIMP files
+*.xcf
+
+# Promo images
+promo
