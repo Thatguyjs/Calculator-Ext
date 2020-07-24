@@ -5,6 +5,17 @@ const input = document.getElementById('input');
 const equals = document.getElementById('equals');
 
 
+// Load history
+CalcHistory.load();
+input.value = CalcHistory.active || "";
+
+
+// Store equation & input data
+input.addEventListener('keyup', (event) => {
+	CalcHistory.storeActive(input.value);
+});
+
+
 // Keep the input area focused
 input.focus();
 input.addEventListener('focusout', input.focus);
@@ -13,6 +24,7 @@ input.addEventListener('focusout', input.focus);
 // Evaluate an expression
 input.addEventListener('keydown', (event) => {
 	if(event.code === "Enter") evalInput();
+	else if(event.code === 'Backspace' && event.shiftKey) input.value = "";
 });
 
 equals.addEventListener('click', evalInput);
@@ -20,8 +32,15 @@ equals.addEventListener('click', evalInput);
 function evalInput() {
 	let result = Calculator.eval(input.value);
 
-	if(result.error) input.value = Calculator.getError(result.error);
-	else input.value = result.value;
+	if(result.error) {
+		input.value = Calculator.getError(result.error);
+	}
+	else if(result.value && input.value !== result.value.toString()) {
+		CalcHistory.store(input.value, result);
+		CalcHistory.storeActive(result.value);
+
+		input.value = result.value;
+	}
 }
 
 

@@ -1,3 +1,6 @@
+// Copyright (c) 2020 Thatguyjs All Rights Reserved.
+
+
 const Calculator = {
 
 

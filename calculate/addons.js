@@ -11,19 +11,8 @@ Calculator.addFunction('abs', (value) => {
 	return Math.abs(value);
 });
 
-Calculator.addFunction('rand', (...values) => {
-	switch(values.length) {
-
-		case 1:
-		return Math.random() * values[0];
-
-		case 2:
-		return Math.random() * (values[1] - values[0]) + values[0];
-
-		default:
-		return Math.random();
-
-	}
+Calculator.addFunction('rand', (value=1) => {
+	return Math.random() * value;
 });
 
 

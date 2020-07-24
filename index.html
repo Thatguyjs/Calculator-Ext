@@ -27,18 +27,18 @@
 
 		<table id="buttons">
 			<tr>
-				<td class="function modifier" colspan="2">
+				<td class="function modifier" name="angle" colspan="2">
 					<div class="rotate-type">
 						<div class="rotate-radians">Rad</div>
 						<div class="rotate-bar"></div>
 						<div class="rotate-degrees selected">Deg</div>
 					</div>
 				</td>
-				<td class="function modifier">Inv</td>
+				<td class="function modifier" name="invert">Inv</td>
 				<td class="operator">^</td>
 				<td class="operator">(</td>
 				<td class="operator">)</td>
-				<td class="function">CE</td>
+				<td class="function modifier" name="clear">CE</td>
 			</tr>
 			<tr>
 				<td class="function">sin</td>
@@ -52,7 +52,7 @@
 			<tr>
 				<td class="function">log</td>
 				<td class="function">ln</td>
-				<td class="function">x!</td>
+				<td class="function modifier" name="!">x!</td>
 				<td class="operator">/</td>
 				<td class="number">4</td>
 				<td class="number">5</td>
@@ -61,16 +61,16 @@
 			<tr>
 				<td class="function">sqrt</td>
 				<td class="function">cbrt</td>
-				<td class="function">EXP</td>
+				<td class="function modifier" name="exp">EXP</td>
 				<td class="operator">-</td>
 				<td class="number">1</td>
 				<td class="number">2</td>
 				<td class="number">3</td>
 			</tr>
 			<tr>
-				<td class="function">π</td>
-				<td class="function">e</td>
-				<td class="function">Ans</td>
+				<td class="function modifier" name="pi">π</td>
+				<td class="function modifier" name="e">e</td>
+				<td class="function modifier" name="ans">Ans</td>
 				<td class="operator">+</td>
 				<td class="number">0</td>
 				<td class="number">.</td>
@@ -83,6 +83,8 @@
 		<script src="calculate/calculate.js"></script>
 		<script src="calculate/addons.js"></script>
 
+		<script src="history.js"></script>
+		<script src="input.js"></script>
 		<script src="main.js"></script>
 	</body>
 </html>
