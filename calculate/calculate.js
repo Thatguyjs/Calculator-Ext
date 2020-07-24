@@ -325,7 +325,7 @@ const Calculator = {
 		switch(node.type) {
 
 			case 'number':
-			return node.value;
+			return Number(node.value.toFixed(11));
 
 			case 'negative':
 			return -this._parseNode(node.value);
@@ -338,11 +338,11 @@ const Calculator = {
 			);
 
 			case 'operator':
-			return this._operate(
+			return Number(this._operate(
 				this._parseNode(node.params[0]),
 				node.value,
 				this._parseNode(node.params[1])
-			);
+			).toFixed(11));
 
 			case 'function':
 			if(node.params.type === 'none') return node.call();
