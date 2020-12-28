@@ -42,6 +42,7 @@ const CalcHistory = {
 
 	// Load results from storage
 	load: function() {
+		return;
 		chrome.storage.local.get(['active', 'history', 'angle'], (data) => {
 			this.active = data.active || '';
 			input.value = this.active;
@@ -62,6 +63,7 @@ const CalcHistory = {
 
 	// Store a new result
 	store: function(equation, result) {
+		return;
 		if(this.last.equation === equation) return;
 
 		this.last = { equation, result };
@@ -80,6 +82,7 @@ const CalcHistory = {
 
 	// Store the active equation
 	storeActive: function(string) {
+		return;
 		this.active = string;
 
 		chrome.storage.local.set({ active: this.active });
@@ -88,12 +91,14 @@ const CalcHistory = {
 
 	// Store the selected angle mode
 	storeAngleMode: function(mode) {
+		return;
 		chrome.storage.local.set({ angle: mode });
 	},
 
 
 	// Clear history
 	clear: function() {
+		return;
 		chrome.storage.local.set({ history: [] });
 	}
 

@@ -5,49 +5,28 @@ const input = document.getElementById('input');
 const equals = document.getElementById('equals');
 
 
-// Load history
-CalcHistory.load();
-input.value = CalcHistory.active || "";
+const Main = {
+
+	// Input area
+	input: document.getElementById('input'),
 
 
-// Store equation & input data
-input.addEventListener('keyup', (event) => {
-	CalcHistory.storeActive(input.value);
-});
+	// Initialize
+	init: function() {
+		window.addEventListener('keydown', (event) => {
+			if(event.key === 'Enter') this.calculate();
+		});
+	},
 
 
-// Keep the input area focused
-input.focus();
-input.addEventListener('focusout', input.focus);
+	// Run a calculation
+	calculate: function() {
+		if(!input.value.length) return;
 
+		const result = Calculator.eval(this.input.value);
 
-// Evaluate an expression
-input.addEventListener('keydown', (event) => {
-	if(event.code === "Enter") evalInput();
-	else if(event.code === 'Backspace' && event.shiftKey) input.value = "";
-});
-
-equals.addEventListener('click', evalInput);
-
-function evalInput() {
-	let result = Calculator.eval(input.value);
-
-	if(result.error) {
-		input.value = Calculator.getError(result.error);
+		if(!result.error) this.input.value = result.value.toString();
+		else this.input.value = Calculator.errorMessage(result.error);
 	}
-	else if(input.value !== result.value.toString()) {
-		CalcHistory.store(input.value, result);
-		CalcHistory.storeActive(result.value);
 
-		input.value = result.value;
-	}
-}
-
-
-// History dropdown menu
-const historyToggle = document.getElementById('history-toggle');
-const historyEntries = document.getElementById('history-entries');
-
-historyToggle.addEventListener('click', () => {
-	historyEntries.classList.toggle('hidden');
-});
+};
