@@ -22,7 +22,9 @@ const Lexer = {
 		function: 2,
 		parenthesis: 3,
 		expression: 4,
-		other: 5
+		separator: 5,
+		other: 6,
+		none: 7
 	},
 
 
@@ -72,6 +74,8 @@ const Lexer = {
 
 	// Group a list of tokens without parentheses
 	_groupExpr: function(tokens) {
+		if(!tokens.length) return { type: this.token.none };
+
 		let ops = tokens.filter(tk => tk.type === this.token.operator);
 
 		let opStack = new Stack();
@@ -108,6 +112,8 @@ const Lexer = {
 					opStack.push(token);
 				}
 				else if(token.op.type === this.op.postfix) {
+					if(!numStack.length) return { error: this.error.invalid_operation };
+
 					numStack.push({
 						type: this.token.operator,
 						value: token.value,
@@ -228,6 +234,16 @@ const Lexer = {
 
 			return {
 				type: this.token.parenthesis,
+				value: char
+			};
+		}
+
+		// Commas
+		else if(char === ',') {
+			this._index++;
+
+			return {
+				type: this.token.separator,
 				value: char
 			};
 		}

@@ -7,13 +7,22 @@ const equals = document.getElementById('equals');
 
 const Main = {
 
-	// Input area
+	// Input area & equals button
 	input: document.getElementById('input'),
+	equals: document.getElementById('equals'),
 
 
 	// Initialize
 	init: function() {
 		this.input.focus();
+
+		this.input.addEventListener('focusout', () => {
+			this.input.focus();
+		});
+
+		this.equals.addEventListener('click', () => {
+			this.calculate();
+		});
 
 		window.addEventListener('keydown', (event) => {
 			if(event.key === 'Enter') this.calculate();

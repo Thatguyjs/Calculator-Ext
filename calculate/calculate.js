@@ -58,6 +58,9 @@ const Calculator = {
 			case Lexer.token.other:
 				return null; // Todo
 
+			case Lexer.token.none:
+				return;
+
 		}
 	},
 

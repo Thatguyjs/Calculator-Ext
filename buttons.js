@@ -58,8 +58,8 @@ const Buttons = {
 				}
 				break;
 
-			case 'clear':
-				input.value = '';
+			case 'back':
+				input.value = input.value.slice(0, -1);
 				break;
 
 			case '!':
