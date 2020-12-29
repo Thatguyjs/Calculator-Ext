@@ -6,6 +6,10 @@ const Calculator = {
 	},
 
 
+	// Function list
+	_functions: {},
+
+
 	// Perform a single operation
 	_operate: function(op, n1, n2) {
 		switch(op) {
@@ -15,7 +19,13 @@ const Calculator = {
 			case '/': return n1 / n2;
 			case '^': return n1 ** n2;
 			// Todo: E
-			// Todo: !
+
+			case '!':
+				if(n1 < 0) return { error: Lexer.error.invalid_operation };
+
+				n2 = n1;
+				while(--n2) n1 *= n2;
+				return n1;
 
 			default: return null;
 		}
@@ -24,6 +34,8 @@ const Calculator = {
 
 	// Parse a node recursively
 	_parseNode: function(node, lastVal) {
+		if(!node) return null;
+
 		switch(node.type) {
 
 			case Lexer.token.number:
@@ -37,7 +49,8 @@ const Calculator = {
 				);
 
 			case Lexer.token.function:
-				return null; // Todo
+				if(!this._functions[node.value]) return null;
+				return this._functions[node.value](this._parseNode(node.params[0], lastVal));
 
 			case Lexer.token.expression:
 				return lastVal;
@@ -88,6 +101,18 @@ const Calculator = {
 		const groups = Lexer.group(tokens);
 
 		return this.evalGroups(groups);
+	},
+
+
+	// Add a constant to the calculator
+	addConstant: function(name, value) {
+		// Todo
+	},
+
+
+	// Add a function to the calculator
+	addFunction: function(name, call) {
+		this._functions[name] = call;
 	},
 
 

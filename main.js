@@ -13,6 +13,8 @@ const Main = {
 
 	// Initialize
 	init: function() {
+		this.input.focus();
+
 		window.addEventListener('keydown', (event) => {
 			if(event.key === 'Enter') this.calculate();
 		});

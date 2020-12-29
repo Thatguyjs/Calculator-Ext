@@ -110,10 +110,19 @@ const Lexer = {
 				else if(token.op.type === this.op.postfix) {
 					numStack.push({
 						type: this.token.operator,
-						value: opStack.pop().value,
+						value: token.value,
 						params: [numStack.pop()]
 					});
 				}
+			}
+
+			// Function
+			else if(token.type === this.token.function) {
+				numStack.push({
+					type: this.token.function,
+					value: token.value,
+					params: [tokens[++ind] || null]
+				});
 			}
 
 			// Expression
