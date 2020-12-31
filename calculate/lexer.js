@@ -183,11 +183,10 @@ const Lexer = {
 	},
 
 
-	// Determine if a token acts as a value in an expression
-	_isValue: function(token) {
-		return token
-			&& token.type !== this.token.operator
-			&& token.value !== '(';
+	// Determine if a '-' operator acts as a negative sign
+	_isNegative: function(last) {
+		return (last.type === this.token.operator && last.op.type !== this.op.postfix)
+			|| last.value === '(';
 	},
 
 
@@ -217,7 +216,7 @@ const Lexer = {
 			this._index++;
 
 			// Negative numbers
-			if(char === '-' && (!last || !this._isValue(last))) {
+			if(char === '-' && (!last || this._isNegative(last))) {
 				let num = this.next();
 				num.value = -num.value;
 
