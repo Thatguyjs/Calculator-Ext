@@ -23,8 +23,9 @@ const Lexer = {
 		parenthesis: 3,
 		expression: 4,
 		separator: 5,
-		other: 6,
-		none: 7
+		equals: 6,
+		other: 7,
+		none: 8
 	},
 
 
@@ -42,11 +43,6 @@ const Lexer = {
 
 	// Operator list
 	_operators: {},
-
-
-	// Function list
-	_functions: {},
-	_funcNames: [],
 
 
 	// Active string to generate tokens from
@@ -72,11 +68,9 @@ const Lexer = {
 	},
 
 
-	// Group a list of tokens without parentheses
-	_groupExpr: function(tokens) {
+	// Convert a list of tokens to a syntax tree
+	_toTree: function(tokens) {
 		if(!tokens.length) return { type: this.token.none };
-
-		let ops = tokens.filter(tk => tk.type === this.token.operator);
 
 		let opStack = new Stack();
 		let numStack = new Stack();
@@ -95,9 +89,7 @@ const Lexer = {
 			// Operator
 			else if(token.type === this.token.operator) {
 				while(opStack.length && token.op.order <= opStack.top.op.order) {
-					if(numStack.length < 2) {
-						return { error: this.error.invalid_operation };
-					}
+					if(numStack.length < 2) return { error: this.error.invalid_operation };
 
 					let nums = [numStack.pop(), numStack.pop()];
 
@@ -133,6 +125,14 @@ const Lexer = {
 
 			// Expression
 			else if(token.type === this.token.expression) {
+				numStack.push({
+					type: this.token.expression,
+					data: this._toTree(token.data)
+				});
+			}
+
+			// Variable / constant
+			else if(token.type === this.token.other) {
 				numStack.push(token);
 			}
 
@@ -152,6 +152,34 @@ const Lexer = {
 		}
 
 		return numStack.top;
+	},
+
+
+	// Generate a group of tokens
+	_toGroup: function(tokens, ind=0) {
+		let expr = [];
+
+		while(ind < tokens.length) {
+			if(tokens[ind].type === this.token.parenthesis) {
+				if(tokens[ind].value === '(') {
+					const group = this._toGroup(tokens, ind + 1);
+
+					expr.push({
+						type: this.token.expression,
+						data: group.expr
+					});
+
+					ind = group.ind + 1;
+					continue;
+				}
+				else return { expr, ind };
+			}
+
+			expr.push(tokens[ind]);
+			ind++;
+		}
+
+		return expr;
 	},
 
 
@@ -238,12 +266,22 @@ const Lexer = {
 			};
 		}
 
-		// Commas
+		// Comma
 		else if(char === ',') {
 			this._index++;
 
 			return {
 				type: this.token.separator,
+				value: char
+			};
+		}
+
+		// Equals sign
+		else if(char === '=') {
+			this._index++;
+
+			return {
+				type: this.token.equals,
 				value: char
 			};
 		}
@@ -269,38 +307,12 @@ const Lexer = {
 	},
 
 
-	// Generate token groups from tokens
-	group: function(tokens) {
-		let exprs = [[]];
-		let depth = 0;
-		let index = 0;
+	// Generate ordered token groups from tokens
+	toTree: function(tokens) {
+		let groups = this._toGroup(tokens);
+		let tree = this._toTree(groups);
 
-		while(index < tokens.length) {
-			if(tokens[index].value === '(') {
-				exprs[depth].push({ type: this.token.expression });
-				depth++;
-				exprs[depth] = [];
-
-				index++;
-				continue;
-			}
-			else if(tokens[index].value === ')') {
-				depth--;
-				index++;
-				continue;
-			}
-
-			exprs[depth].push(tokens[index]);
-			index++;
-		}
-
-		let groups = [];
-
-		for(let e in exprs) {
-			groups.push(this._groupExpr(exprs[e]));
-		}
-
-		return groups;
+		return tree;
 	},
 
 

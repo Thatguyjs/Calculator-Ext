@@ -1,10 +1,6 @@
 // Copyright (c) 2020 Thatguyjs All Rights Reserved.
 
 
-const input = document.getElementById('input');
-const equals = document.getElementById('equals');
-
-
 const Main = {
 
 	// Input area & equals button

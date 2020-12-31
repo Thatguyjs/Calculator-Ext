@@ -6,8 +6,10 @@ const Calculator = {
 	},
 
 
-	// Function list
+	// Functions, constants, and variables
 	_functions: {},
+	_constants: {},
+	_variables: {},
 
 
 	// Perform a single operation
@@ -24,7 +26,7 @@ const Calculator = {
 				if(n1 < 0) return { error: Lexer.error.invalid_operation };
 
 				n2 = n1;
-				while(--n2) n1 *= n2;
+				while(--n2 > 0) n1 *= n2;
 				return n1;
 
 			default: return null;
@@ -33,7 +35,7 @@ const Calculator = {
 
 
 	// Parse a node recursively
-	_parseNode: function(node, lastVal) {
+	_parseNode: function(node) {
 		if(!node) return null;
 
 		switch(node.type) {
@@ -44,19 +46,20 @@ const Calculator = {
 			case Lexer.token.operator:
 				return this._operate(
 					node.value,
-					this._parseNode(node.params[0], lastVal),
-					this._parseNode(node.params[1], lastVal)
+					this._parseNode(node.params[0]),
+					this._parseNode(node.params[1])
 				);
 
 			case Lexer.token.function:
 				if(!this._functions[node.value]) return null;
-				return this._functions[node.value](this._parseNode(node.params[0], lastVal));
+				return this._functions[node.value](this._parseNode(node.params[0]));
 
 			case Lexer.token.expression:
-				return lastVal;
+				return this._parseNode(node.data);
 
 			case Lexer.token.other:
-				return null; // Todo
+				if(this._constants[node.value]) return this._constants[node.value];
+				return this._variables[node.value] || null;
 
 			case Lexer.token.none:
 				return;
@@ -66,20 +69,9 @@ const Calculator = {
 
 
 	// Evaluate grouped nodes
-	evalGroups: function(groups) {
-		let result = null;
-		let last = null;
+	evalTree: function(tree) {
+		let result = this._parseNode(tree);
 		let error = 0;
-
-		for(let g = groups.length - 1; g >= 0; g--) {
-			if(groups[g].error) {
-				error = groups[g].error;
-				break;
-			}
-
-			last = result;
-			result = this._parseNode(groups[g], last);
-		}
 
 		return {
 			error,
@@ -90,9 +82,9 @@ const Calculator = {
 
 	// Evaluate from a list of tokens
 	evalTokens: function(tokens) {
-		const groups = Lexer.group(tokens);
+		const groups = Lexer.toTree(tokens);
 
-		return this.evalGroups(groups);
+		return this.evalTree(groups);
 	},
 
 
@@ -101,15 +93,15 @@ const Calculator = {
 		if(!string.length) return { error: 1 };
 
 		const tokens = Lexer.toTokens(string);
-		const groups = Lexer.group(tokens);
+		const groups = Lexer.toTree(tokens);
 
-		return this.evalGroups(groups);
+		return this.evalTree(groups);
 	},
 
 
 	// Add a constant to the calculator
 	addConstant: function(name, value) {
-		// Todo
+		this._constants[name] = value;
 	},
 
 
