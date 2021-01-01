@@ -52,7 +52,7 @@ const Calculator = {
 
 			case Lexer.token.function:
 				if(!this._functions[node.value]) return null;
-				return this._functions[node.value](this._parseNode(node.params[0]));
+				return this._functions[node.value](this._parseNode(node.params));
 
 			case Lexer.token.expression:
 				return this._parseNode(node.data);

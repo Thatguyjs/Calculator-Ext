@@ -3,7 +3,8 @@ const Lexer = {
 	// Error constants
 	error: {
 		unexpected_char: 0,
-		invalid_operation: 1
+		invalid_operation: 1,
+		missing_parameters: 2
 	},
 
 
@@ -80,6 +81,8 @@ const Lexer = {
 
 		while(ind < length) {
 			const token = tokens[ind];
+			if(token.error) console.log('token error:', token.error);
+			if(token.error) return token;
 
 			// Number
 			if(token.type === this.token.number) {
@@ -116,10 +119,14 @@ const Lexer = {
 
 			// Function
 			else if(token.type === this.token.function) {
+				if(!tokens[ind + 1] || tokens[ind + 1].type !== this.token.expression) {
+					return { error: this.error.missing_parameters };
+				}
+
 				numStack.push({
 					type: this.token.function,
 					value: token.value,
-					params: [tokens[++ind] || null]
+					params: this._toTree(tokens[++ind].data)
 				});
 			}
 
