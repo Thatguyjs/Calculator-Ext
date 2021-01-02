@@ -48,6 +48,10 @@ class Stack {
 		return this._items.pop();
 	}
 
+	get items() {
+		return this._items;
+	}
+
 	get length() {
 		return this._length;
 	}

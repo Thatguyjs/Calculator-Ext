@@ -50,12 +50,18 @@ const Calculator = {
 					this._parseNode(node.params[1])
 				);
 
-			case Lexer.token.function:
+			case Lexer.token.function: {
 				if(!this._functions[node.value]) return null;
-				return this._functions[node.value](this._parseNode(node.params));
+				let params = this._parseNode(node.params);
+				if(!Array.isArray(params)) params = [params];
+				return this._functions[node.value](...params);
+			}
 
 			case Lexer.token.expression:
 				return this._parseNode(node.data);
+
+			case Lexer.token.list:
+				return node.items.map(tk => this._parseNode(tk));
 
 			case Lexer.token.other:
 				if(this._constants[node.value]) return this._constants[node.value];

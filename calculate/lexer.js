@@ -23,10 +23,11 @@ const Lexer = {
 		function: 2,
 		parenthesis: 3,
 		expression: 4,
-		separator: 5,
-		equals: 6,
-		other: 7,
-		none: 8
+		list: 5,
+		separator: 6,
+		equals: 7,
+		other: 8,
+		none: 9
 	},
 
 
@@ -70,7 +71,7 @@ const Lexer = {
 
 
 	// Convert a list of tokens to a syntax tree
-	_toTree: function(tokens) {
+	_toTree: function(tokens, root=false) {
 		if(!tokens.length) return { type: this.token.none };
 
 		let opStack = new Stack();
@@ -126,7 +127,7 @@ const Lexer = {
 				numStack.push({
 					type: this.token.function,
 					value: token.value,
-					params: this._toTree(tokens[++ind].data)
+					params: this._toTree(tokens[++ind].data, false)
 				});
 			}
 
@@ -134,7 +135,7 @@ const Lexer = {
 			else if(token.type === this.token.expression) {
 				numStack.push({
 					type: this.token.expression,
-					data: this._toTree(token.data)
+					data: this._toTree(token.data, false)
 				});
 			}
 
@@ -157,6 +158,11 @@ const Lexer = {
 				params: [nums[1], nums[0]]
 			});
 		}
+
+		if(numStack.length > 1) return {
+			type: this.token.list,
+			items: numStack.items
+		};
 
 		return numStack.top;
 	},
@@ -193,7 +199,7 @@ const Lexer = {
 	// Determine if a '-' operator acts as a negative sign
 	_isNegative: function(last) {
 		return (last.type === this.token.operator && last.op.type !== this.op.postfix)
-			|| last.value === '(';
+			|| last.value === '(' || last.value === ',';
 	},
 
 
@@ -316,7 +322,7 @@ const Lexer = {
 	// Generate ordered token groups from tokens
 	toTree: function(tokens) {
 		let groups = this._toGroup(tokens);
-		let tree = this._toTree(groups);
+		let tree = this._toTree(groups, true);
 
 		return tree;
 	},

@@ -11,8 +11,14 @@ Calculator.addFunction('abs', (value) => {
 	return Math.abs(value);
 });
 
-Calculator.addFunction('rand', (value=1) => {
-	return Math.random() * value;
+Calculator.addFunction('rand', (min=0, max=1) => {
+	if(max < min) {
+		let tmp = min;
+		min = max;
+		max = tmp;
+	}
+
+	return Math.random() * (max - min) + min;
 });
 
 
