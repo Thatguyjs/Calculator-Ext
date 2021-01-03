@@ -22,6 +22,7 @@ const Main = {
 
 		window.addEventListener('keydown', (event) => {
 			if(event.key === 'Enter') this.calculate();
+			else if(event.key === 'Backspace' && event.shiftKey) input.value = "";
 		});
 	},
 
