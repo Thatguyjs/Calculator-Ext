@@ -2,7 +2,8 @@ const Calculator = {
 
 	// Error codes (start at 50 to make room for Lexer error codes)
 	error: {
-		missing_expression: 50
+		missing_expression: 50,
+		unknown_variable: 51
 	},
 
 
@@ -12,8 +13,24 @@ const Calculator = {
 	_variables: {},
 
 
+	// Number precision (decimal places)
+	_precision: 10,
+
+
+	// Round to a set precision
+	_round: function(number, places=this._precision) {
+		if(number.error) return number;
+		if(number.toString().includes('e')) return number;
+
+		return +(Math.round(number + 'e' + places) + 'e-' + places);
+	},
+
+
 	// Perform a single operation
 	_operate: function(op, n1, n2) {
+		if(n1.error) return n1;
+		if(n2.error) return n2;
+
 		switch(op) {
 			case '+': return n1 + n2;
 			case '-': return n1 - n2;
@@ -29,7 +46,7 @@ const Calculator = {
 				while(--n2 > 0) n1 *= n2;
 				return n1;
 
-			default: return null;
+			default: return op;
 		}
 	},
 
@@ -44,16 +61,17 @@ const Calculator = {
 				return node.value;
 
 			case Lexer.token.operator:
-				return this._operate(
+				return this._round(this._operate(
 					node.value,
 					this._parseNode(node.params[0]),
 					this._parseNode(node.params[1])
-				);
+				));
 
 			case Lexer.token.function: {
 				if(!this._functions[node.value]) return null;
 				let params = this._parseNode(node.params);
 				if(!Array.isArray(params)) params = [params];
+				// Todo: Catch errors in parameter list
 				return this._functions[node.value](...params);
 			}
 
@@ -64,8 +82,8 @@ const Calculator = {
 				return node.items.map(tk => this._parseNode(tk));
 
 			case Lexer.token.other:
-				if(this._constants[node.value]) return this._constants[node.value];
-				return this._variables[node.value] || null;
+				if(this._constants[node.value]) return this._round(this._constants[node.value]);
+				return this._variables[node.value] || { error: this.error.unknown_variable };
 
 			case Lexer.token.none:
 				return;
@@ -77,7 +95,7 @@ const Calculator = {
 	// Evaluate grouped nodes
 	evalTree: function(tree) {
 		let result = this._parseNode(tree);
-		let error = 0;
+		let error = result.error || 0;
 
 		return {
 			error,
@@ -124,6 +142,9 @@ const Calculator = {
 			case Lexer.error.unexpected_char: return "Unexpected character";
 			case Lexer.error.invalid_operation: return "Invalid Operation";
 			case this.error.missing_expression: return "Missing Expression";
+			case this.error.unknown_variable: return "Unknown Variable";
+
+			default: return "Unknown Error";
 		}
 	}
 

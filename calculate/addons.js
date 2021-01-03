@@ -11,7 +11,7 @@ Calculator.addFunction('abs', (value) => {
 	return Math.abs(value);
 });
 
-Calculator.addFunction('rand', (min=0, max=1) => {
+Calculator.addFunction('rand', (min=1, max=0) => {
 	if(max < min) {
 		let tmp = min;
 		min = max;
