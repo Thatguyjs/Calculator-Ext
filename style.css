@@ -2,7 +2,8 @@
 
 
 :root {
-	--background: rgb(13, 17, 23);
+	/* --background: rgb(13, 17, 23); */
+	--background: rgb(17, 21, 27);
 
 	--history-background: rgb(85, 85, 85);
 	--history-equation: rgb(220, 220, 220);
@@ -70,13 +71,12 @@ body {
 	height: 26px;
 
 	border-radius: 3px;
+	transition: background 0.15s;
 
 	cursor: pointer;
-
-	transition: background 0.15s;
 }
 #history-dropdown:hover {
-	background: rgb(216, 216, 216);
+	background: rgb(220, 220, 220);
 }
 
 #history-dropdown svg {

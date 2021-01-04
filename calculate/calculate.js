@@ -3,7 +3,8 @@ const Calculator = {
 	// Error codes (start at 50 to make room for Lexer error codes)
 	error: {
 		missing_expression: 50,
-		unknown_variable: 51
+		unknown_variable: 51,
+		invalid_variable: 52
 	},
 
 
@@ -117,9 +118,33 @@ const Calculator = {
 		if(!string.length) return { error: 1 };
 
 		const tokens = Lexer.toTokens(string);
-		const groups = Lexer.toTree(tokens);
+		const exprs = Lexer.toExpressions(tokens);
 
-		return this.evalTree(groups);
+		let equations = []; // Equations to evaluate after getting variables
+		let results = []; // Equation results
+
+		// Define variables, collect equations
+		for(let e in exprs) {
+			if(Lexer.isDefinition(exprs[e])) {
+				const def = Lexer.getDefinition(exprs[e]);
+				const res = this.evalTree(def.expr);
+				if(res.error) results.push(res);
+
+				if(this._constants[def.name] !== undefined) return { error: this.error.invalid_variable };
+				this._variables[def.name] = res.value;
+			}
+			else {
+				equations.push(exprs[e]);
+			}
+		}
+
+		// Evaluate equations
+		for(let e in equations) {
+			const groups = Lexer.toTree(equations[e]);
+			results.push(this.evalTree(groups));
+		}
+
+		return results;
 	},
 
 
@@ -139,10 +164,13 @@ const Calculator = {
 	errorMessage: function(code) {
 		switch(code) {
 			case 0: return "None";
-			case Lexer.error.unexpected_char: return "Unexpected character";
+			case Lexer.error.unexpected_char: return "Unexpected Character";
 			case Lexer.error.invalid_operation: return "Invalid Operation";
+			case Lexer.error.invalid_definition: return "Invalid Variable Definition";
+
 			case this.error.missing_expression: return "Missing Expression";
 			case this.error.unknown_variable: return "Unknown Variable";
+			case this.error.invalid_variable: return "Invalid Variable Name";
 
 			default: return "Unknown Error";
 		}

@@ -31,10 +31,16 @@ const Main = {
 	calculate: function() {
 		if(!input.value.length) return;
 
-		const result = Calculator.eval(this.input.value);
+		const results = Calculator.eval(this.input.value);
+		let resString = "";
 
-		if(!result.error) this.input.value = result.value.toString();
-		else this.input.value = Calculator.errorMessage(result.error);
+		for(let r in results) {
+			if(!results[r].error) resString += results[r].value.toString();
+			else resString += Calculator.errorMessage(results[r].error);
+			resString += ', ';
+		}
+
+		this.input.value = resString.slice(0, -2);
 	}
 
 };

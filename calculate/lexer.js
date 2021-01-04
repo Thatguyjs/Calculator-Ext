@@ -4,7 +4,8 @@ const Lexer = {
 	error: {
 		unexpected_char: 0,
 		invalid_operation: 1,
-		missing_parameters: 2
+		missing_parameters: 2,
+		invalid_definition: 3,
 	},
 
 
@@ -82,7 +83,6 @@ const Lexer = {
 
 		while(ind < length) {
 			const token = tokens[ind];
-			if(token.error) console.log('token error:', token.error);
 			if(token.error) return token;
 
 			// Number
@@ -192,7 +192,7 @@ const Lexer = {
 			ind++;
 		}
 
-		return expr;
+		return { expr, ind };
 	},
 
 
@@ -319,12 +319,54 @@ const Lexer = {
 	},
 
 
+	// Get a list of expressions from tokens
+	toExpressions: function(tokens) {
+		let exprs = [];
+		let current = [];
+
+		let depth = 0;
+
+		for(let t in tokens) {
+			if(tokens[t].value === '(') depth++;
+			else if(tokens[t].value === ')') depth--;
+
+			else if(tokens[t].value === ',' && depth === 0) {
+				exprs.push(current);
+				current = [];
+				continue;
+			}
+
+			current.push(tokens[t]);
+		}
+
+		if(current.length) exprs.push(current);
+		return exprs;
+	},
+
+
 	// Generate ordered token groups from tokens
 	toTree: function(tokens) {
-		let groups = this._toGroup(tokens);
-		let tree = this._toTree(groups, true);
+		let grouped = this._toGroup(tokens, 0);
+		let tree = this._toTree(grouped.expr, true);
 
 		return tree;
+	},
+
+
+	// Check if an expression acts as a variable definition
+	isDefinition: function(tokens) {
+		return tokens.length > 2
+				&& tokens[0].type === this.token.other
+				&& tokens[1].type === this.token.equals;
+	},
+
+
+	// Get definition info from tokens
+	getDefinition: function(tokens) {
+		return {
+			name: tokens[0].value,
+			expr: this.toTree(tokens.slice(2))
+		};
 	},
 
 
