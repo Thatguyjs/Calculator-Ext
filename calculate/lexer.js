@@ -113,7 +113,7 @@ const Lexer = {
 					numStack.push({
 						type: this.token.operator,
 						value: token.value,
-						params: [numStack.pop()]
+						params: [numStack.pop(), { type: this.token.number, value: 0 }]
 					});
 				}
 			}
