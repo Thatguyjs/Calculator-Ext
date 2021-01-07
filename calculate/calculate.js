@@ -79,6 +79,9 @@ const Calculator = {
 			case Lexer.token.expression:
 				return this._parseNode(node.data);
 
+			case Lexer.token.negative:
+				return -this._parseNode(node.data);
+
 			case Lexer.token.list:
 				return node.items.map(tk => this._parseNode(tk));
 
@@ -157,6 +160,12 @@ const Calculator = {
 	// Add a function to the calculator
 	addFunction: function(name, call) {
 		this._functions[name] = call;
+	},
+
+
+	// Clear the variable list
+	clearVariables: function() {
+		this._variables = {};
 	},
 
 

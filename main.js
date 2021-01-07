@@ -3,20 +3,15 @@
 
 const Main = {
 
-	// Input area & equals button
-	input: document.getElementById('input'),
-	equals: document.getElementById('equals'),
-
-
 	// Initialize
 	init: function() {
-		this.input.focus();
+		input.focus();
 
-		this.input.addEventListener('focusout', () => {
-			this.input.focus();
+		input.addEventListener('focusout', () => {
+			input.focus();
 		});
 
-		this.equals.addEventListener('click', () => {
+		equals.addEventListener('click', () => {
 			this.calculate();
 		});
 
@@ -27,11 +22,12 @@ const Main = {
 	},
 
 
-	// Run a calculation
+	// Evalulate an equation
 	calculate: function() {
 		if(!input.value.length) return;
+		Calculator.clearVariables();
 
-		const results = Calculator.eval(this.input.value);
+		const results = Calculator.eval(input.value);
 		let resString = "";
 
 		for(let r in results) {
@@ -40,7 +36,10 @@ const Main = {
 			resString += ', ';
 		}
 
-		this.input.value = resString.slice(0, -2);
+		resString = resString.slice(0, -2);
+
+		CalcHistory.store(input.value, resString);
+		input.value = resString;
 	}
 
 };

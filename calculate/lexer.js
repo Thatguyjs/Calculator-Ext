@@ -24,11 +24,12 @@ const Lexer = {
 		function: 2,
 		parenthesis: 3,
 		expression: 4,
-		list: 5,
-		separator: 6,
-		equals: 7,
-		other: 8,
-		none: 9
+		negative: 5,
+		list: 6,
+		separator: 7,
+		equals: 8,
+		other: 9,
+		none: 10
 	},
 
 
@@ -139,6 +140,27 @@ const Lexer = {
 				});
 			}
 
+			// Negative
+			else if(token.type === this.token.negative) {
+				const nextTk = tokens[++ind];
+				let data = {};
+
+				if(nextTk.type === this.token.expression) {
+					data = this._toTree(nextTk.data, false);
+				}
+				else if(nextTk.type === this.token.function) {
+					data = this._toTree([nextTk, tokens[++ind]]);
+				}
+				else if(nextTk.type === this.token.other) {
+					data = nextTk;
+				}
+
+				numStack.push({
+					type: this.token.negative,
+					data
+				});
+			}
+
 			// Variable / constant
 			else if(token.type === this.token.other) {
 				numStack.push(token);
@@ -230,10 +252,17 @@ const Lexer = {
 
 			// Negative numbers
 			if(char === '-' && (!last || this._isNegative(last))) {
-				let num = this.next();
-				num.value = -num.value;
+				let lastInd = this._index;
+				let tk = this.next();
+				if(!tk) return { error: this.error.invalid_operation };
 
-				return num;
+				if(tk.type === this.token.number) tk.value = -tk.value;
+				else {
+					this._index = lastInd;
+					tk = { type: this.token.negative, value: '-' };
+				}
+
+				return tk;
 			}
 
 			return {
@@ -309,7 +338,7 @@ const Lexer = {
 		let tokens = [];
 		let tk = this.next();
 
-		while(tk !== null) {
+		while(tk !== null && !tk.error) {
 			tokens.push(tk);
 			tk = this.next(tk);
 		}

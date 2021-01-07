@@ -83,6 +83,8 @@ const Buttons = {
 				break;
 
 		}
+
+		input.dispatchEvent(new Event('input'));
 	}
 
 };
@@ -102,6 +104,8 @@ for(let b in Buttons.buttons) {
 			else {
 				input.value += btn.innerText + '(';
 			}
+
+			input.dispatchEvent(new Event('input'));
 		});
 	}
 }

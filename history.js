@@ -23,32 +23,47 @@ const CalcHistory = {
 	_addEquation: function(node) {
 		let container = document.createElement('div');
 
-		let equation = document.createElement('h2');
+		let equation = document.createElement('span');
+		equation.className = 'history-equation';
 		equation.innerText = node.equation;
 
-		let result = document.createElement('p');
+		let result = document.createElement('span');
+		result.className = 'history-result';
 		result.innerText = node.result.value;
 
 		container.appendChild(equation);
 		container.appendChild(result);
 
-		container.addEventListener('click', () => {
-			input.value = node.equation;
-		});
+		// container.addEventListener('click', () => {
+		// 	input.value = node.equation;
+		// });
 
 		this._element.insertBefore(container, this._element.children[0]);
 	},
 
 
+	// Initialize calculator history
+	init: function() {
+		this.load();
+
+		input.addEventListener('input', () => {
+			if(input.value !== this.active) {
+				chrome.storage.local.set({ 'active': input.value });
+				this.active = input.value;
+			}
+		});
+	},
+
+
 	// Load results from storage
 	load: function() {
-		return;
 		chrome.storage.local.get(['active', 'history', 'angle'], (data) => {
 			this.active = data.active || '';
 			input.value = this.active;
 
 			Buttons.setAngleMode(data['angle'] || 'degrees');
 
+			console.log('load:', data.history);
 			this.stored = data.history || [];
 			this.last = this.stored[0] || {};
 
@@ -61,10 +76,12 @@ const CalcHistory = {
 	},
 
 
-	// Store a new result
+	// Store a new equation
 	store: function(equation, result) {
-		return;
 		if(this.last.equation === equation) return;
+
+		chrome.storage.local.set({ 'active': result });
+		this.active = result;
 
 		this.last = { equation, result };
 		this._addEquation(this.last);
@@ -80,25 +97,14 @@ const CalcHistory = {
 	},
 
 
-	// Store the active equation
-	storeActive: function(string) {
-		return;
-		this.active = string;
-
-		chrome.storage.local.set({ active: this.active });
-	},
-
-
 	// Store the selected angle mode
 	storeAngleMode: function(mode) {
-		return;
 		chrome.storage.local.set({ angle: mode });
 	},
 
 
 	// Clear history
 	clear: function() {
-		return;
 		chrome.storage.local.set({ history: [] });
 	}
 
