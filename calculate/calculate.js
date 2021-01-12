@@ -99,7 +99,7 @@ const Calculator = {
 	// Evaluate grouped nodes
 	evalTree: function(tree) {
 		let result = this._parseNode(tree);
-		let error = result.error || 0;
+		let error = tree.error || result.error || 0;
 
 		return {
 			error,

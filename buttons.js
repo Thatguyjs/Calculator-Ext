@@ -79,7 +79,7 @@ const Buttons = {
 				break;
 
 			case 'ans':
-				input.value += CalcHistory.last.result.value;
+				input.value += CalcHistory.last.result;
 				break;
 
 		}

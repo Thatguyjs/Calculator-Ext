@@ -3,8 +3,9 @@
 
 const CalcHistory = {
 
-	// History entries element
-	_element: document.getElementById('history-entries'),
+	// History button & entries
+	_button: document.getElementById('history-toggle'),
+	_list: document.getElementById('history-entries'),
 
 
 	// Active equation
@@ -12,7 +13,7 @@ const CalcHistory = {
 
 
 	// Last result
-	last: {},
+	last: { equation: "", result: "", error: 0 },
 
 
 	// All stored results
@@ -29,16 +30,25 @@ const CalcHistory = {
 
 		let result = document.createElement('span');
 		result.className = 'history-result';
-		result.innerText = node.result.value;
+		result.innerText = node.result;
 
 		container.appendChild(equation);
+		container.appendChild(document.createElement('div'));
 		container.appendChild(result);
+
+		equation.addEventListener('click', () => {
+			input.value = node.equation;
+		});
+
+		result.addEventListener('click', () => {
+			input.value = node.result;
+		});
 
 		// container.addEventListener('click', () => {
 		// 	input.value = node.equation;
 		// });
 
-		this._element.insertBefore(container, this._element.children[0]);
+		this._list.insertBefore(container, this._list.children[0]);
 	},
 
 
@@ -52,6 +62,10 @@ const CalcHistory = {
 				this.active = input.value;
 			}
 		});
+
+		this._button.addEventListener('click', () => {
+			this._list.classList.toggle('hidden');
+		});
 	},
 
 
@@ -63,7 +77,6 @@ const CalcHistory = {
 
 			Buttons.setAngleMode(data['angle'] || 'degrees');
 
-			console.log('load:', data.history);
 			this.stored = data.history || [];
 			this.last = this.stored[0] || {};
 
@@ -78,7 +91,7 @@ const CalcHistory = {
 
 	// Store a new equation
 	store: function(equation, result) {
-		if(this.last.equation === equation) return;
+		if(this.last.equation === equation || equation === result) return;
 
 		chrome.storage.local.set({ 'active': result });
 		this.active = result;
@@ -86,8 +99,8 @@ const CalcHistory = {
 		this.last = { equation, result };
 		this._addEquation(this.last);
 
-		while(this._element.children.length > 25) {
-			this._element.removeChild(this._element.lastChild);
+		while(this._list.children.length > 25) {
+			this._list.removeChild(this._list.lastChild);
 		}
 
 		this.stored.unshift(this.last);
