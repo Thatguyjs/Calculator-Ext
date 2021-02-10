@@ -56,7 +56,7 @@ const CalcHistory = {
 	init: function() {
 		this.load();
 
-		input.addEventListener('input', () => {
+		input.addEventListener('keyup', () => {
 			if(input.value !== this.active) {
 				chrome.storage.local.set({ 'active': input.value });
 				this.active = input.value;
