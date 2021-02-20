@@ -23,7 +23,10 @@ const Calculator = {
 		if(number.error) return number;
 		if(number.toString().includes('e')) return number;
 
-		return +(Math.round(number + 'e' + places) + 'e-' + places);
+		const res = +(Math.round(number + 'e' + places) + 'e-' + places);
+		
+		if(isNaN(res)) return number;
+		return +res;
 	},
 
 
