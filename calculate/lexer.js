@@ -64,6 +64,7 @@ const Lexer = {
 			'-': { order: 0, type: this.op.infix },
 			'*': { order: 1, type: this.op.infix },
 			'/': { order: 1, type: this.op.infix },
+			'%': { order: 1, type: this.op.infix },
 			'^': { order: 2, type: this.op.infix },
 			'E': { order: 3, type: this.op.infix },
 			'!': { order: 3, type: this.op.postfix }

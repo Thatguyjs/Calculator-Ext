@@ -24,7 +24,7 @@ const Calculator = {
 		if(number.toString().includes('e')) return number;
 
 		const res = +(Math.round(number + 'e' + places) + 'e-' + places);
-		
+
 		if(isNaN(res)) return number;
 		return +res;
 	},
@@ -38,9 +38,13 @@ const Calculator = {
 		switch(op) {
 			case '+': return n1 + n2;
 			case '-': return n1 - n2;
+
 			case '*': return n1 * n2;
 			case '/': return n1 / n2;
+			case '%': return n1 % n2;
+
 			case '^': return n1 ** n2;
+
 			case 'E': return n1 * (10 ** n2);
 
 			case '!':
