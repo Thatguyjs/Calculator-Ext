@@ -10,9 +10,9 @@
 		"128": "icons/icon128.png"
 	},
 
-	"browser_action": {
+	"action": {
 		"default_title": "Calculator",
-		"default_popup": "index.html"
+		"default_popup": "popup/index.html"
 	},
 
 	"permissions": [
@@ -20,5 +20,5 @@
 	],
 
 	"offline_enabled": true,
-	"manifest_version": 2
+	"manifest_version": 3
 }
