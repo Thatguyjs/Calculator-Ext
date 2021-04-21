@@ -35,3 +35,4 @@ A calculator extension for Chrome
 
 ### Other
 - Supports both degree (deg) and radian (rad) modes
+- Keeps track of the last 25 calculations and results
