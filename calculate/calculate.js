@@ -1,399 +1,195 @@
-// Copyright (c) 2020 Thatguyjs All Rights Reserved.
-
-
 const Calculator = {
 
-
-	// Added functions and constants
-	_added: {
-		functions: [],
-		constants: []
+	// Error codes (start at 50 to make room for Lexer error codes)
+	error: {
+		missing_expression: 50,
+		unknown_variable: 51,
+		invalid_variable: 52
 	},
 
 
-	// Parse error
-	_error: 0,
+	// Functions, constants, and variables
+	_functions: {},
+	_constants: {},
+	_variables: {},
 
 
-	// Error code messages
-	_errorMessages: [
-		null,
-		"Unexpected input",
-		"Invalid operation",
-		"Invalid node"
-	],
+	// Number precision (decimal places)
+	_precision: 10,
 
 
-	// Reset calculator variables
-	_reset: function() {
-		this._error = 0;
+	// Round to a set precision
+	_round: function(number, places=this._precision) {
+		if(number.error) return number;
+		if(number.toString().includes('e')) return number;
+
+		const res = +(Math.round(number + 'e' + places) + 'e-' + places);
+
+		if(isNaN(res)) return number;
+		return +res;
 	},
 
 
-	// Check if a character is a number
-	_isNumber: function(char) {
-		return '0123456789.'.includes(char);
-	},
+	// Perform a single operation
+	_operate: function(op, n1, n2) {
+		if(n1.error) return n1;
+		if(n2.error) return n2;
 
-
-	// Check if a character is a postfix operator
-	_isPostfix: function(char) {
-		return '!'.includes(char);
-	},
-
-
-	// Check if a character is an operator
-	_isOperator: function(char) {
-		return '+-*/%^E'.includes(char);
-	},
-
-
-	// Check if a string is an added function
-	_isFunction: function(string, start) {
-		let part = string.slice(start);
-
-		if(part.indexOf('(') === -1) {
-			return false;
-		}
-
-		part = part.slice(0, part.indexOf('('));
-		return this._added.functions[part] !== undefined ? part.length : false;
-	},
-
-
-	// Check if a string is an added constant
-	_isConstant: function(string, start) {
-		let part = "";
-		let ind = start;
-
-		while(ind < string.length && !this._isOperator(string[ind])) {
-			part += string[ind++];
-		}
-
-		return this._added.constants[part] !== undefined ? part.length : false;
-	},
-
-
-	// Get the precedence of an operator
-	_getPrecedence: function(op) {
-		return {
-			'+': 1, '-': 1,
-			'*': 2, '/': 2, '%': 2,
-			'^': 3,
-			'!': 4,
-			'E': 5
-		}[op];
-	},
-
-
-	// Convert infix to prefix & construct an AST
-	_toPrefix: function(expr=null) {
-		if(this._error || !expr) return { type: 'none' };
-
-		let opStack = new Stack();
-		let numStack = new Stack();
-
-		let lastExpr = false;
-
-		const length = expr.length;
-		let ind = 0;
-
-		while(!this._error && ind < length) {
-
-			// Negatives
-			if(expr[ind] === '-' && !lastExpr) {
-				numStack.push({ type: 'number', value: 0 });
-				opStack.push('-');
-
-				lastExpr = true;
-			}
-
-			// Numbers
-			else if(this._isNumber(expr[ind])) {
-				let numString = "";
-				while(this._isNumber(expr[ind])) numString += expr[ind++];
-				ind--;
-
-				numStack.push({
-					type: 'number',
-					value: Number(numString)
-				});
-
-				lastExpr = true;
-			}
-
-			// Postfix operators
-			else if(this._isPostfix(expr[ind])) {
-				if(!numStack.length) {
-					this._error = 2;
-					break;
-				}
-
-				while(opStack.length && this._getPrecedence(expr[ind]) <= this._getPrecedence(opStack.top)) {
-					if(numStack.length < 2) {
-						this._error = 2;
-						break;
-					}
-
-					let values = [numStack.pop(), numStack.pop()];
-
-					numStack.push({
-						type: 'operator',
-						value: opStack.pop(),
-						params: values.reverse()
-					});
-				}
-
-				numStack.push({
-					type: 'postfix',
-					value: expr[ind],
-					params: numStack.pop()
-				});
-
-				lastExpr = true;
-			}
-
-			// Operators
-			else if(this._isOperator(expr[ind])) {
-				if(!numStack.length) {
-					this._error = 2;
-					break;
-				}
-
-				while(opStack.length && this._getPrecedence(expr[ind]) <= this._getPrecedence(opStack.top)) {
-					if(numStack.length < 2) {
-						this._error = 2;
-						break;
-					}
-
-					let values = [numStack.pop(), numStack.pop()];
-
-					numStack.push({
-						type: 'operator',
-						value: opStack.pop(),
-						params: values.reverse()
-					});
-				}
-
-				opStack.push(expr[ind]);
-				lastExpr = false;
-			}
-
-			// Parentheses
-			else if(expr[ind] === '(') {
-				opStack.push('(');
-				lastExpr = false;
-			}
-
-			else if(expr[ind] === ')') {
-				while(opStack.length && opStack.top !== '(') {
-					if(numStack.length < 2) {
-						this._error = 2;
-						break;
-					}
-
-					let values = [numStack.pop(), numStack.pop()];
-
-					numStack.push({
-						type: 'operator',
-						value: opStack.pop(),
-						params: values.reverse()
-					});
-				}
-
-				opStack.pop();
-				lastExpr = true;
-			}
-
-			// Added functions
-			else if(this._isFunction(expr, ind)) {
-				let nameLength = this._isFunction(expr, ind);
-				let name = expr.substr(ind, nameLength);
-
-				ind += nameLength;
-				let paramString = "";
-				let depth = 0;
-
-				while(expr[++ind] !== ')' || depth) {
-					if(expr[ind] === '(') depth++;
-					else if(expr[ind] === ')') depth--;
-
-					paramString += expr[ind];
-				}
-
-				numStack.push({
-					type: 'function',
-					params: this._toPrefix(paramString),
-					call: this._added.functions[name]
-				});
-
-				ind += paramString.length - 1;
-				lastExpr = true;
-			}
-
-			// Added constants
-			else if(this._isConstant(expr, ind)) {
-				let nameLength = this._isConstant(expr, ind);
-				let name = expr.substr(ind, nameLength);
-
-				numStack.push({
-					type: 'number',
-					value: this._added.constants[name]
-				});
-
-				ind += nameLength - 1;
-				lastExpr = true;
-			}
-
-			// Unexpected character
-			else {
-				this._error = 1;
-				console.log(`Unexpected character: "${expr[ind]}" at index`, ind);
-				break;
-			}
-
-			ind++;
-		}
-
-		while(opStack.length) {
-			let values = [numStack.pop(), numStack.pop()];
-
-			numStack.push({
-				type: 'operator',
-				value: opStack.pop(),
-				params: values.reverse()
-			});
-		}
-
-		return numStack.top;
-	},
-
-
-	// Perform an operation
-	_operate: function(n1, op, n2) {
 		switch(op) {
+			case '+': return n1 + n2;
+			case '-': return n1 - n2;
 
-			// Postfix operators
+			case '*': return n1 * n2;
+			case '/': return n1 / n2;
+			case '%': return n1 % n2;
+
+			case '^': return n1 ** n2;
+
+			case 'E': return n1 * (10 ** n2);
 
 			case '!':
-				if(n1 < 0) {
-					this._error = 2;
-					return 0;
-				}
+				if(n1 < 0) return { error: Lexer.error.invalid_operation };
 
 				n2 = n1;
-				while(--n2) n1 *= n2;
-			return n1;
+				while(--n2 > 0) n1 *= n2;
+				return n1;
 
-
-			// Normal operators
-
-			case '+':
-			return n1 + n2;
-
-			case '-':
-			return n1 - n2;
-
-			case '*':
-			return n1 * n2;
-
-			case '/':
-			return n1 / n2;
-
-			case '%':
-			return n1 % n2;
-
-			case '^':
-			return n1 ** n2;
-
-			case 'E':
-			return n1 * (10 ** n2);
-
-			default:
-				this._error = 2;
-				return 0;
-
+			default: return op;
 		}
 	},
 
 
-	// Parse part of an AST
+	// Parse a node recursively
 	_parseNode: function(node) {
-		if(!node && !this._error) this._error = 3;
-		if(this._error) return null;
+		if(!node) return null;
 
 		switch(node.type) {
 
-			case 'number':
-			return Number(node.value.toFixed(11));
+			case Lexer.token.number:
+				return node.value;
 
-			case 'negative':
-			return -this._parseNode(node.value);
+			case Lexer.token.operator:
+				return this._round(this._operate(
+					node.value,
+					this._parseNode(node.params[0]),
+					this._parseNode(node.params[1])
+				));
 
-			case 'postfix':
-			return this._operate(
-				this._parseNode(node.params),
-				node.value,
-				null
-			);
+			case Lexer.token.function: {
+				if(!this._functions[node.value]) return null;
+				let params = this._parseNode(node.params);
+				if(!Array.isArray(params)) params = [params];
+				// Todo: Catch errors in parameter list
+				return this._functions[node.value](...params);
+			}
 
-			case 'operator':
-			return Number(this._operate(
-				this._parseNode(node.params[0]),
-				node.value,
-				this._parseNode(node.params[1])
-			).toFixed(11));
+			case Lexer.token.expression:
+				return this._parseNode(node.data);
 
-			case 'function':
-			if(node.params.type === 'none') return node.call();
-			return node.call(this._parseNode(node.params));
+			case Lexer.token.negative:
+				return -this._parseNode(node.data);
 
-			case 'none':
-			return null;
+			case Lexer.token.list:
+				return node.items.map(tk => this._parseNode(tk));
 
-			default:
-				this._error = 3;
-				return 0;
+			case Lexer.token.other:
+				if(this._constants[node.value]) return this._round(this._constants[node.value]);
+				return this._variables[node.value] || { error: this.error.unknown_variable };
+
+			case Lexer.token.none:
+				return;
 
 		}
 	},
 
 
-	// Add a constant
-	addConstant: function(name, value) {
-		this._added.constants[name] = value;
-	},
+	// Evaluate grouped nodes
+	evalTree: function(tree) {
+		let result = this._parseNode(tree);
+		let error = tree.error || result.error || 0;
 
-
-	// Add a function
-	addFunction: function(name, callback) {
-		this._added.functions[name] = callback;
-	},
-
-
-	// Evaluate a mathematical expression
-	eval: function(expr=null) {
-		if(!expr) return { error: 0, value: "" };
-		this._reset();
-
-		// Remove whitespace
-		expr = expr.replace(/\s+/g, '');
-
-		// Parse the expression
-		let prefixed = this._toPrefix(expr);
-		let result = this._parseNode(prefixed);
-
-		// Return the result
 		return {
-			error: this._error,
+			error,
 			value: result
 		};
 	},
 
 
-	// Get an error message from a code
-	getError: function(code) {
-		return this._errorMessages[code];
+	// Evaluate from a list of tokens
+	evalTokens: function(tokens) {
+		const groups = Lexer.toTree(tokens);
+
+		return this.evalTree(groups);
+	},
+
+
+	// Evaluate from a string
+	eval: function(string="") {
+		if(!string.length) return { error: 1 };
+
+		const tokens = Lexer.toTokens(string);
+		const exprs = Lexer.toExpressions(tokens);
+
+		let equations = []; // Equations to evaluate after getting variables
+		let results = []; // Equation results
+
+		// Define variables, collect equations
+		for(let e in exprs) {
+			if(Lexer.isDefinition(exprs[e])) {
+				const def = Lexer.getDefinition(exprs[e]);
+				const res = this.evalTree(def.expr);
+				if(res.error) results.push(res);
+
+				if(this._constants[def.name] !== undefined) return { error: this.error.invalid_variable };
+				this._variables[def.name] = res.value;
+			}
+			else {
+				equations.push(exprs[e]);
+			}
+		}
+
+		// Evaluate equations
+		for(let e in equations) {
+			const groups = Lexer.toTree(equations[e]);
+			results.push(this.evalTree(groups));
+		}
+
+		return results;
+	},
+
+
+	// Add a constant to the calculator
+	addConstant: function(name, value) {
+		this._constants[name] = value;
+	},
+
+
+	// Add a function to the calculator
+	addFunction: function(name, call) {
+		this._functions[name] = call;
+	},
+
+
+	// Clear the variable list
+	clearVariables: function() {
+		this._variables = {};
+	},
+
+
+	// Get the error message from an error code
+	errorMessage: function(code) {
+		switch(code) {
+			case 0: return "None";
+			case Lexer.error.unexpected_char: return "Unexpected Character";
+			case Lexer.error.invalid_operation: return "Invalid Operation";
+			case Lexer.error.invalid_definition: return "Invalid Variable Definition";
+
+			case this.error.missing_expression: return "Missing Expression";
+			case this.error.unknown_variable: return "Unknown Variable";
+			case this.error.invalid_variable: return "Invalid Variable Name";
+
+			default: return "Unknown Error";
+		}
 	}
 
 };

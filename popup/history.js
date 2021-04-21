@@ -3,8 +3,9 @@
 
 const CalcHistory = {
 
-	// History entries element
-	_element: document.getElementById('history-entries'),
+	// History button & entries
+	_button: document.getElementById('history-toggle'),
+	_list: document.getElementById('history-entries'),
 
 
 	// Active equation
@@ -12,7 +13,7 @@ const CalcHistory = {
 
 
 	// Last result
-	last: {},
+	last: { equation: "", result: "", error: 0 },
 
 
 	// All stored results
@@ -23,20 +24,48 @@ const CalcHistory = {
 	_addEquation: function(node) {
 		let container = document.createElement('div');
 
-		let equation = document.createElement('h2');
+		let equation = document.createElement('span');
+		equation.className = 'history-equation';
 		equation.innerText = node.equation;
 
-		let result = document.createElement('p');
-		result.innerText = node.result.value;
+		let result = document.createElement('span');
+		result.className = 'history-result';
+		result.innerText = node.result;
 
 		container.appendChild(equation);
+		container.appendChild(document.createElement('div'));
 		container.appendChild(result);
 
-		container.addEventListener('click', () => {
+		equation.addEventListener('click', () => {
 			input.value = node.equation;
 		});
 
-		this._element.insertBefore(container, this._element.children[0]);
+		result.addEventListener('click', () => {
+			input.value = node.result;
+		});
+
+		// container.addEventListener('click', () => {
+		// 	input.value = node.equation;
+		// });
+
+		this._list.insertBefore(container, this._list.children[0]);
+	},
+
+
+	// Initialize calculator history
+	init: function() {
+		this.load();
+
+		input.addEventListener('keyup', () => {
+			if(input.value !== this.active) {
+				chrome.storage.local.set({ 'active': input.value });
+				this.active = input.value;
+			}
+		});
+
+		this._button.addEventListener('click', () => {
+			this._list.classList.toggle('hidden');
+		});
 	},
 
 
@@ -60,29 +89,24 @@ const CalcHistory = {
 	},
 
 
-	// Store a new result
+	// Store a new equation
 	store: function(equation, result) {
-		if(this.last.equation === equation) return;
+		if(this.last.equation === equation || equation === result) return;
+
+		chrome.storage.local.set({ 'active': result });
+		this.active = result;
 
 		this.last = { equation, result };
 		this._addEquation(this.last);
 
-		while(this._element.children.length > 25) {
-			this._element.removeChild(this._element.lastChild);
+		while(this._list.children.length > 25) {
+			this._list.removeChild(this._list.lastChild);
 		}
 
 		this.stored.unshift(this.last);
 		while(this.stored.length > 25) this.stored.pop();
 
 		chrome.storage.local.set({ history: this.stored });
-	},
-
-
-	// Store the active equation
-	storeActive: function(string) {
-		this.active = string;
-
-		chrome.storage.local.set({ active: this.active });
 	},
 
 

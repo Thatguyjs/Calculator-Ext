@@ -58,8 +58,8 @@ const Buttons = {
 				}
 				break;
 
-			case 'clear':
-				input.value = '';
+			case 'back':
+				input.value = input.value.slice(0, -1);
 				break;
 
 			case '!':
@@ -79,10 +79,12 @@ const Buttons = {
 				break;
 
 			case 'ans':
-				input.value += CalcHistory.last.result.value;
+				input.value += CalcHistory.last.result;
 				break;
 
 		}
+
+		input.dispatchEvent(new Event('input'));
 	}
 
 };
@@ -102,6 +104,8 @@ for(let b in Buttons.buttons) {
 			else {
 				input.value += btn.innerText + '(';
 			}
+
+			input.dispatchEvent(new Event('input'));
 		});
 	}
 }
