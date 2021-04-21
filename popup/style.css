@@ -5,8 +5,10 @@
 	/* --background: rgb(13, 17, 23); */
 	--background: rgb(17, 21, 27);
 
-	--history-background: rgb(85, 85, 85);
+	--history-background: rgba(27, 31, 37, 0.7);
+	--history-scrollbar: rgba(255, 255, 255, 0.2);
 	--history-equation: rgb(220, 220, 220);
+	--history-equals: rgb(35, 94, 164);
 	--history-result: rgb(210, 210, 210);
 
 	--num-bg: rgb(32, 38, 45);
@@ -101,11 +103,19 @@ body {
 	background: var(--history-background);
 	border-radius: 6px;
 	box-shadow: 0 2px 6px rgb(30, 30, 30);
+	backdrop-filter: blur(5px);
 
 	overflow-y: scroll;
 	z-index: 1;
 
 	cursor: default;
+}
+#history-entries::-webkit-scrollbar {
+	width: 12px;
+}
+#history-entries::-webkit-scrollbar-thumb {
+	background: var(--history-scrollbar);
+	border-radius: 2px;
 }
 
 #history-entries > div {
@@ -147,6 +157,7 @@ body {
 
 	content: "=";
 	font-size: 16px;
+	color: var(--history-equals);
 }
 
 
