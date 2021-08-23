@@ -41,9 +41,12 @@ expect_eq("-14, 15", calculate("7 - 21, 3 * 5"));
 expect_eq("2.5, 0.5", calculate("5 / 2, 0.25 * 4 / 2"));
 expect_eq("1, 2, 3", calculate("3 - 2, 2, 5 / 2 + 0.5"));
 
-// Variables
+// Variables (single & multiple expressions)
 expect_eq("6", calculate("a = 5, a + 1"));
 expect_eq("6", calculate("a + 1, a = 5"));
+expect_eq("10", calculate("a = 6, b = 4, a + b"));
+expect_eq("10", calculate("a + b, a = 6, b = 4"));
+expect_eq("10", calculate("a = 6, a + b, b = 4"));
 expect_eq("16", calculate("a = 4 * 2, b = 16 / 4 + 4, a + b"));
 expect_eq("31, 42", calculate("a = 31, b = a + 11, a, b"));
 expect_eq("31, 42", calculate("a, b, a = 31, b = a + 11"));
