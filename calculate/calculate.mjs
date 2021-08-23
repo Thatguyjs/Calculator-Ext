@@ -1,3 +1,7 @@
+import Lexer from "./lexer.mjs";
+import Stack from "./stack.mjs";
+
+
 const Calculator = {
 
 	// Error codes (start at 50 to make room for Lexer error codes)
@@ -193,3 +197,6 @@ const Calculator = {
 	}
 
 };
+
+
+export default Calculator;

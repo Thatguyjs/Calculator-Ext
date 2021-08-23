@@ -67,3 +67,6 @@ class Stack {
 		return this._length;
 	}
 }
+
+
+export default Stack;

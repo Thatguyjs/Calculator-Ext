@@ -1,10 +1,14 @@
 // Copyright (c) 2020 Thatguyjs All Rights Reserved.
 
+let Calculator = null;
+
 
 const Main = {
 
 	// Initialize
-	init: function() {
+	init: async function() {
+		Calculator = (await import("/calculate/calculate.mjs")).default;
+
 		input.focus();
 
 		input.addEventListener('focusout', () => {

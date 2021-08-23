@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Thatguyjs All Rights Reserved.
+// Copyright (c) 2021 Thatguyjs All Rights Reserved.
+
+import Calculator from "./calculate.mjs";
 
 
 Calculator.addConstant('e', Math.E);
