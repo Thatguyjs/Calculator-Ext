@@ -1,7 +1,7 @@
 {
-	"name": "Calculator-Ext",
+	"name": "Calculator",
 	"description": "A scientific calculator",
-	"version": "2.5.18",
+	"version": "2.6.19",
 
 	"scripts": {
 		"test": "node tests/index.mjs"

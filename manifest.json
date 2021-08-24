@@ -1,7 +1,7 @@
 {
 	"name": "Calculator",
 	"description": "A scientific calculator",
-	"version": "2.5.18",
+	"version": "2.6.19",
 
 	"icons": {
 		"16": "icons/icon16.png",

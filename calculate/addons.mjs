@@ -30,6 +30,16 @@ Calculator.addFunction('sum', (...nums) => {
 	return sum;
 });
 
+// Inclusive on both ends
+Calculator.addFunction('sumrange', (start, stop) => {
+	let sum = 0;
+
+	for(let i = start; i <= stop; i++)
+		sum += i;
+
+	return sum;
+});
+
 
 Calculator.addFunction('sqrt', Math.sqrt);
 
