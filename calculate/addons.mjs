@@ -21,27 +21,26 @@ Calculator.addFunction('rand', (min=1, max=0) => {
 	return Math.random() * (max - min) + min;
 });
 
+Calculator.addFunction('sum', (...nums) => {
+	let sum = 0;
 
-Calculator.addFunction('sqrt', (value) => {
-	return Math.sqrt(value);
+	for(let n in nums)
+		sum += nums[n];
+
+	return sum;
 });
 
-Calculator.addFunction('cbrt', (value) => {
-	return Math.cbrt(value);
-});
+
+Calculator.addFunction('sqrt', Math.sqrt);
+
+Calculator.addFunction('cbrt', Math.cbrt);
 
 
-Calculator.addFunction('floor', (value) => {
-	return Math.floor(value);
-});
+Calculator.addFunction('floor', Math.floor);
 
-Calculator.addFunction('round', (value) => {
-	return Math.round(value);
-});
+Calculator.addFunction('round', Math.round);
 
-Calculator.addFunction('ceil', (value) => {
-	return Math.ceil(value);
-});
+Calculator.addFunction('ceil', Math.ceil);
 
 
 Calculator.addFunction('sin', (value) => {
@@ -75,10 +74,6 @@ Calculator.addFunction('atan', (value) => {
 });
 
 
-Calculator.addFunction('log', (value) => {
-	return Math.log10(value);
-});
+Calculator.addFunction('log', Math.log10);
 
-Calculator.addFunction('ln', (value) => {
-	return Math.log(value);
-});
+Calculator.addFunction('ln', Math.log);
