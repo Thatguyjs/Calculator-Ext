@@ -20,7 +20,7 @@ const Lexer = {
 	},
 
 
-	// Token type constants
+	// Token types
 	token: {
 		number: 0,
 		operator: 1,
@@ -246,6 +246,18 @@ const Lexer = {
 				numString += this._string[this._index];
 			}
 
+			if(last && last.type === this.token.parenthesis && last.value === ')') {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.number,
+						value: +numString
+					}
+				};
+			}
+
 			return {
 				type: this.token.number,
 				value: +numString
@@ -281,6 +293,18 @@ const Lexer = {
 			const len = this._string.indexOf('(', this._index) - this._index;
 			this._index += len;
 
+			if(last && last.type === this.token.number) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.function,
+						value: this._string.slice(this._index - len, this._index)
+					}
+				};
+			}
+
 			return {
 				type: this.token.function,
 				value: this._string.slice(this._index - len, this._index)
@@ -295,6 +319,18 @@ const Lexer = {
 				charString += this._string[this._index];
 			}
 
+			if(last && (last.type === this.token.number || (last.type === this.token.parenthesis && last.value === ')'))) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.other,
+						value: charString
+					}
+				};
+			}
+
 			return {
 				type: this.token.other,
 				value: charString
@@ -304,6 +340,19 @@ const Lexer = {
 		// Parentheses
 		else if(char === '(' || char === ')') {
 			this._index++;
+
+			// last.type cannot be other, because of functions
+			if(char === '(' && last && last.type === this.token.number) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.parenthesis,
+						value: '('
+					}
+				};
+			}
 
 			return {
 				type: this.token.parenthesis,

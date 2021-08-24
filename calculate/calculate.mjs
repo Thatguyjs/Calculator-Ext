@@ -11,12 +11,10 @@ const Calculator = {
 		invalid_variable: 52
 	},
 
-
 	// Functions, constants, and variables
 	_functions: {},
 	_constants: {},
 	_variables: {},
-
 
 	// Number precision (decimal places)
 	_precision: 10,

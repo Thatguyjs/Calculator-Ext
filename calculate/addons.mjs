@@ -4,9 +4,7 @@ import Calculator from "./calculate.mjs";
 
 
 Calculator.addConstant('e', Math.E);
-
 Calculator.addConstant('pi', Math.PI);
-
 
 
 Calculator.addFunction('abs', (value) => {
@@ -24,7 +22,6 @@ Calculator.addFunction('rand', (min=1, max=0) => {
 });
 
 
-
 Calculator.addFunction('sqrt', (value) => {
 	return Math.sqrt(value);
 });
@@ -32,7 +29,6 @@ Calculator.addFunction('sqrt', (value) => {
 Calculator.addFunction('cbrt', (value) => {
 	return Math.cbrt(value);
 });
-
 
 
 Calculator.addFunction('floor', (value) => {
@@ -46,7 +42,6 @@ Calculator.addFunction('round', (value) => {
 Calculator.addFunction('ceil', (value) => {
 	return Math.ceil(value);
 });
-
 
 
 Calculator.addFunction('sin', (value) => {
@@ -78,7 +73,6 @@ Calculator.addFunction('atan', (value) => {
 	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
 	return Math.atan(value) * mult;
 });
-
 
 
 Calculator.addFunction('log', (value) => {
