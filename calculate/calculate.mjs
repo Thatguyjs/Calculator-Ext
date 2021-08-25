@@ -80,7 +80,10 @@ const Calculator = {
 			case Lexer.token.function: {
 				if(!this._functions[node.value]) return null;
 				let params = this._parseNode(node.params);
+
+				if(params === undefined) params = [];
 				if(!Array.isArray(params)) params = [params];
+
 				// Todo: Catch errors in parameter list
 				return this._functions[node.value](...params);
 			}
