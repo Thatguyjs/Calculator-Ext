@@ -9,6 +9,7 @@ const Lexer = {
 		invalid_operation: 1,
 		missing_parameters: 2,
 		invalid_definition: 3,
+		invalid_expression: 4
 	},
 
 
@@ -137,6 +138,10 @@ const Lexer = {
 
 			// Expression
 			else if(token.type === this.token.expression) {
+				if(!token.data.length) {
+					return { error: this.error.invalid_expression };
+				}
+
 				numStack.push({
 					type: this.token.expression,
 					data: this._toTree(token.data)
@@ -342,7 +347,7 @@ const Lexer = {
 			this._index++;
 
 			// last.type cannot be other, because of functions
-			if(char === '(' && last && last.type === this.token.number) {
+			if(char === '(' && last && (last.type === this.token.number || last.value === ')')) {
 				return {
 					type: this.token.operator,
 					op: this._operators['*'],

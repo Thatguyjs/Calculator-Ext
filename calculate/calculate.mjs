@@ -185,6 +185,7 @@ const Calculator = {
 			case Lexer.error.unexpected_char: return "Unexpected Character";
 			case Lexer.error.invalid_operation: return "Invalid Operation";
 			case Lexer.error.invalid_definition: return "Invalid Variable Definition";
+			case Lexer.error.invalid_expression: return "Invalid Expression";
 
 			case this.error.missing_expression: return "Missing Expression";
 			case this.error.unknown_variable: return "Unknown Variable";
