@@ -46,6 +46,15 @@ expect_eq_calc("-14, 15", "7 - 21, 3 * 5");
 expect_eq_calc("2.5, 0.5", "5 / 2, 0.25 * 4 / 2");
 expect_eq_calc("1, 2, 3", "3 - 2, 2, 5 / 2 + 0.5");
 
+// Implicit multiplication
+expect_eq_calc("6", "2(3)");
+expect_eq_calc("14", "(7)2");
+expect_eq_calc("18", "a = 3, 6a");
+expect_eq_calc("26", "2sqrt(169)");
+expect_eq_calc("39", "sqrt(169)3");
+expect_eq_calc("12", "(2)3!");
+expect_eq_calc("34", "a = 11, b = 3, (a)b + 1");
+
 // Variables (single & multiple expressions)
 expect_eq_calc("6", "a = 5, a + 1");
 expect_eq_calc("6", "a + 1, a = 5");
@@ -60,8 +69,16 @@ expect_eq_calc("31, 42", "a, b, a = 31, b = a + 11");
 expect_eq_calc("3.1415926536", "pi");
 expect_eq_calc("2.7182818285", "e");
 expect_eq_calc("6", "sqrt(36)");
+expect_eq_calc("32", "sum(2, 5, 9, 16)");
+expect_eq_calc("0", "sum()");
+expect_eq_calc("0", "round(0.49)");
+expect_eq_calc("1", "round(0.5)");
+expect_eq_calc("4", "floor(4.99)");
+expect_eq_calc("3", "ceil(2.01)");
 
 // Errors
 expect_eq_calc("Invalid Operation", "(-1)!");
+expect_eq_calc("Invalid Expression", "()");
+expect_eq_calc("Unknown Variable", "4 + a");
 
 finish();
