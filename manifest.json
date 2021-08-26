@@ -20,5 +20,7 @@
 	],
 
 	"offline_enabled": true,
+	"minimum_chrome_version": "85",
+
 	"manifest_version": 3
 }
