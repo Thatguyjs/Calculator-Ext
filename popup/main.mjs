@@ -1,14 +1,13 @@
 // Copyright (c) 2020 Thatguyjs All Rights Reserved.
 
-let Calculator = null;
+import CalcHistory from "./history.mjs";
+import Calculator from "/calculate/calculate.mjs";
 
 
 const Main = {
 
 	// Initialize
 	init: async function() {
-		Calculator = (await import("/calculate/calculate.mjs")).default;
-
 		input.focus();
 
 		input.addEventListener('focusout', () => {
@@ -47,3 +46,6 @@ const Main = {
 	}
 
 };
+
+
+export default Main;
