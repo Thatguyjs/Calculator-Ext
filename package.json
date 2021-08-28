@@ -4,8 +4,5 @@
 	"version": "2.6.22",
 	"scripts": {
 		"test": "node tests/index.mjs"
-	},
-	"dependencies": {
-		"latex.js": "^0.12.4"
 	}
 }
