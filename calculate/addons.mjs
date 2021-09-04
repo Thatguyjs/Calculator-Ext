@@ -3,8 +3,8 @@
 import Calculator from "./calculate.mjs";
 
 
-Calculator.addConstant('e', Math.E);
 Calculator.addConstant('pi', Math.PI);
+Calculator.addConstant('e', Math.E);
 
 
 Calculator.addFunction('abs', (value) => {
@@ -38,7 +38,7 @@ Calculator.addFunction('sumrange', (start, stop) => {
 		sum += i;
 
 	return sum;
-});
+}, { min: 2, max: 2 });
 
 
 Calculator.addFunction('sqrt', Math.sqrt, { min: 1, max: 1 });

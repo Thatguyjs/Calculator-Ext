@@ -24,6 +24,8 @@ A calculator extension for Chrome
 ### Functions
 - abs (absolute value)
 - rand (random number generator)
+- sum (sum a list of numbers)
+- sumrange (sum a range of numbers)
 - sqrt (square root)
 - cbrt (cube root)
 - floor (round down)
