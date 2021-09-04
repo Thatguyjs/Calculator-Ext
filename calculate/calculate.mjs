@@ -1,18 +1,22 @@
+import Lexer from "./lexer.mjs";
+import Stack from "./stack.mjs";
+
+
 const Calculator = {
 
 	// Error codes (start at 50 to make room for Lexer error codes)
 	error: {
 		missing_expression: 50,
 		unknown_variable: 51,
-		invalid_variable: 52
+		unknown_function: 52,
+		invalid_variable: 53,
+		invalid_parameters: 54
 	},
-
 
 	// Functions, constants, and variables
 	_functions: {},
 	_constants: {},
 	_variables: {},
-
 
 	// Number precision (decimal places)
 	_precision: 10,
@@ -76,16 +80,25 @@ const Calculator = {
 				));
 
 			case Lexer.token.function: {
-				if(!this._functions[node.value]) return null;
+				if(!this._functions[node.value]) return { error: this.error.unknown_function };
 				let params = this._parseNode(node.params);
+
+				if(params === undefined) params = [];
 				if(!Array.isArray(params)) params = [params];
+
+				const func = this._functions[node.value];
+
+				if(params.length < func.options.min || (func.options.max > -1 && params.length > func.options.max))
+					return { error: this.error.invalid_parameters };
+
 				// Todo: Catch errors in parameter list
-				return this._functions[node.value](...params);
+				return func.callback(...params);
 			}
 
 			case Lexer.token.expression:
 				return this._parseNode(node.data);
 
+			// Unused?
 			case Lexer.token.negative:
 				return -this._parseNode(node.data);
 
@@ -165,8 +178,10 @@ const Calculator = {
 
 
 	// Add a function to the calculator
-	addFunction: function(name, call) {
-		this._functions[name] = call;
+	addFunction: function(name, call, options={}) {
+		options.min ??= 0;
+		options.max ??= -1;
+		this._functions[name] = { callback: call, options };
 	},
 
 
@@ -183,13 +198,19 @@ const Calculator = {
 			case Lexer.error.unexpected_char: return "Unexpected Character";
 			case Lexer.error.invalid_operation: return "Invalid Operation";
 			case Lexer.error.invalid_definition: return "Invalid Variable Definition";
+			case Lexer.error.invalid_expression: return "Invalid Expression";
 
 			case this.error.missing_expression: return "Missing Expression";
 			case this.error.unknown_variable: return "Unknown Variable";
+			case this.error.unknown_function: return "Unknown Function";
 			case this.error.invalid_variable: return "Invalid Variable Name";
+			case this.error.invalid_parameters: return "Invalid Parameters";
 
 			default: return "Unknown Error";
 		}
 	}
 
 };
+
+
+export default Calculator;

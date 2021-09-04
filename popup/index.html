@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<div id="input-area">
-			<input id="input"></input>
+			<input id="input" spellcheck="false">
 
 			<div id="history-dropdown">
 				<svg id="history-toggle" viewBox="0 0 24 24">
@@ -79,15 +79,9 @@
 		</table>
 
 
-		<script src="/calculate/stack.js"></script>
-		<script src="/calculate/calculate.js"></script>
-		<script src="/calculate/lexer.js"></script>
-		<script src="/calculate/addons.js"></script>
+		<script type="module" src="/calculate/calculate.mjs"></script>
+		<script type="module" src="/calculate/addons.mjs"></script>
 
-		<script src="history.js"></script>
-		<script src="buttons.js"></script>
-		<script src="main.js"></script>
-
-		<script src="load.js"></script>
+		<script src="load.mjs" type="module"></script>
 	</body>
 </html>

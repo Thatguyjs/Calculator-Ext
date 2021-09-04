@@ -1,3 +1,6 @@
+import Stack from "./stack.mjs";
+
+
 const Lexer = {
 
 	// Error constants
@@ -6,6 +9,7 @@ const Lexer = {
 		invalid_operation: 1,
 		missing_parameters: 2,
 		invalid_definition: 3,
+		invalid_expression: 4
 	},
 
 
@@ -17,7 +21,7 @@ const Lexer = {
 	},
 
 
-	// Token type constants
+	// Token types
 	token: {
 		number: 0,
 		operator: 1,
@@ -73,7 +77,7 @@ const Lexer = {
 
 
 	// Convert a list of tokens to a syntax tree
-	_toTree: function(tokens, root=false) {
+	_toTree: function(tokens) {
 		if(!tokens.length) return { type: this.token.none };
 
 		let opStack = new Stack();
@@ -128,15 +132,20 @@ const Lexer = {
 				numStack.push({
 					type: this.token.function,
 					value: token.value,
-					params: this._toTree(tokens[++ind].data, false)
+					params: this._toTree(tokens[++ind].data)
 				});
 			}
 
 			// Expression
 			else if(token.type === this.token.expression) {
+				// TODO: Catch other errors with invalid expressions (non-numeric input)
+				if(!token.data.length) {
+					return { error: this.error.invalid_expression };
+				}
+
 				numStack.push({
 					type: this.token.expression,
-					data: this._toTree(token.data, false)
+					data: this._toTree(token.data)
 				});
 			}
 
@@ -149,7 +158,7 @@ const Lexer = {
 					data = nextTk;
 				}
 				else if(nextTk.type === this.token.expression) {
-					data = this._toTree(nextTk.data, false);
+					data = this._toTree(nextTk.data);
 				}
 				else if(nextTk.type === this.token.function) {
 					data = this._toTree([nextTk, tokens[++ind]]);
@@ -243,6 +252,18 @@ const Lexer = {
 				numString += this._string[this._index];
 			}
 
+			if(last && last.type === this.token.parenthesis && last.value === ')') {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.number,
+						value: +numString
+					}
+				};
+			}
+
 			return {
 				type: this.token.number,
 				value: +numString
@@ -278,6 +299,18 @@ const Lexer = {
 			const len = this._string.indexOf('(', this._index) - this._index;
 			this._index += len;
 
+			if(last && last.type === this.token.number) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.function,
+						value: this._string.slice(this._index - len, this._index)
+					}
+				};
+			}
+
 			return {
 				type: this.token.function,
 				value: this._string.slice(this._index - len, this._index)
@@ -292,6 +325,18 @@ const Lexer = {
 				charString += this._string[this._index];
 			}
 
+			if(last && (last.type === this.token.number || (last.type === this.token.parenthesis && last.value === ')'))) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.other,
+						value: charString
+					}
+				};
+			}
+
 			return {
 				type: this.token.other,
 				value: charString
@@ -301,6 +346,19 @@ const Lexer = {
 		// Parentheses
 		else if(char === '(' || char === ')') {
 			this._index++;
+
+			// last.type cannot be other, because of functions
+			if(char === '(' && last && (last.type === this.token.number || last.value === ')')) {
+				return {
+					type: this.token.operator,
+					op: this._operators['*'],
+					value: '*',
+					next: {
+						type: this.token.parenthesis,
+						value: '('
+					}
+				};
+			}
 
 			return {
 				type: this.token.parenthesis,
@@ -350,7 +408,7 @@ const Lexer = {
 	},
 
 
-	// Get a list of expressions from tokens
+	// Split tokens into groups by comma (,)
 	toExpressions: function(tokens) {
 		let exprs = [];
 		let current = [];
@@ -370,6 +428,9 @@ const Lexer = {
 			current.push(tokens[t]);
 		}
 
+		if(depth !== 0)
+			return [[{ error: this.error.invalid_expression }]];
+
 		if(current.length) exprs.push(current);
 		return exprs;
 	},
@@ -378,7 +439,7 @@ const Lexer = {
 	// Generate ordered token groups from tokens
 	toTree: function(tokens) {
 		let grouped = this._toGroup(tokens, 0);
-		let tree = this._toTree(grouped.expr, true);
+		let tree = this._toTree(grouped.expr);
 
 		return tree;
 	},
@@ -407,3 +468,7 @@ const Lexer = {
 	}
 
 };
+
+
+Lexer.init();
+export default Lexer;

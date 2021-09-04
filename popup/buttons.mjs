@@ -1,5 +1,7 @@
 // Copyright (c) 2020 Thatguyjs All Rights Reserved.
 
+import CalcHistory from "./history.mjs";
+
 
 const Buttons = {
 
@@ -109,3 +111,6 @@ for(let b in Buttons.buttons) {
 		});
 	}
 }
+
+
+export default Buttons;

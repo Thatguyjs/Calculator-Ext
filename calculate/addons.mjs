@@ -1,15 +1,15 @@
-// Copyright (c) 2020 Thatguyjs All Rights Reserved.
+// Copyright (c) 2021 Thatguyjs All Rights Reserved.
 
+import Calculator from "./calculate.mjs";
 
-Calculator.addConstant('e', Math.E);
 
 Calculator.addConstant('pi', Math.PI);
-
+Calculator.addConstant('e', Math.E);
 
 
 Calculator.addFunction('abs', (value) => {
 	return Math.abs(value);
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('rand', (min=1, max=0) => {
 	if(max < min) {
@@ -19,70 +19,71 @@ Calculator.addFunction('rand', (min=1, max=0) => {
 	}
 
 	return Math.random() * (max - min) + min;
+}, { max: 2 });
+
+Calculator.addFunction('sum', (...nums) => {
+	let sum = 0;
+
+	for(let n in nums)
+		sum += nums[n];
+
+	return sum;
 });
 
+// Inclusive on both ends
+Calculator.addFunction('sumrange', (start, stop) => {
+	let sum = 0;
+
+	for(let i = start; i <= stop; i++)
+		sum += i;
+
+	return sum;
+}, { min: 2, max: 2 });
 
 
-Calculator.addFunction('sqrt', (value) => {
-	return Math.sqrt(value);
-});
+Calculator.addFunction('sqrt', Math.sqrt, { min: 1, max: 1 });
 
-Calculator.addFunction('cbrt', (value) => {
-	return Math.cbrt(value);
-});
+Calculator.addFunction('cbrt', Math.cbrt, { min: 1, max: 1 });
 
 
+Calculator.addFunction('floor', Math.floor, { min: 1, max: 1 });
 
-Calculator.addFunction('floor', (value) => {
-	return Math.floor(value);
-});
+Calculator.addFunction('round', Math.round, { min: 1, max: 1 });
 
-Calculator.addFunction('round', (value) => {
-	return Math.round(value);
-});
-
-Calculator.addFunction('ceil', (value) => {
-	return Math.ceil(value);
-});
-
+Calculator.addFunction('ceil', Math.ceil, { min: 1, max: 1 });
 
 
 Calculator.addFunction('sin', (value) => {
 	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 	return Math.sin(value);
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('asin', (value) => {
 	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
 	return Math.asin(value) * mult;
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('cos', (value) => {
 	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 	return Math.cos(value);
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('acos', (value) => {
 	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
 	return Math.acos(value) * mult;
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('tan', (value) => {
 	if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 	return Math.tan(value);
-});
+}, { min: 1, max: 1 });
 
 Calculator.addFunction('atan', (value) => {
 	let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
 	return Math.atan(value) * mult;
-});
+}, { min: 1, max: 1 });
 
 
+Calculator.addFunction('log', Math.log10, { min: 1, max: 1 });
 
-Calculator.addFunction('log', (value) => {
-	return Math.log10(value);
-});
-
-Calculator.addFunction('ln', (value) => {
-	return Math.log(value);
-});
+Calculator.addFunction('ln', Math.log, { min: 1, max: 1 });

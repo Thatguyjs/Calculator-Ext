@@ -1,8 +1,12 @@
 # Old file versions
 *_old*
 
+# Node / npm stuff
+/node_modules
+/package-lock.json
+
 # GIMP files
 *.xcf
 
 # Promo images
-promo
+/promo

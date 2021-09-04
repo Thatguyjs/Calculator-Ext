@@ -1,0 +1,8 @@
+{
+	"name": "Calculator",
+	"description": "A scientific calculator",
+	"version": "2.6.25",
+	"scripts": {
+		"test": "node tests/index.mjs"
+	}
+}
