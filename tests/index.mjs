@@ -83,5 +83,6 @@ expect_eq_calc("Invalid Expression", "()");
 expect_eq_calc("Invalid Expression", "(");
 expect_eq_calc("Invalid Expression", ")");
 expect_eq_calc("Unknown Variable", "4 + a");
+expect_eq_calc("Unknown Function", "notafunc(123, 456)");
 
 finish();

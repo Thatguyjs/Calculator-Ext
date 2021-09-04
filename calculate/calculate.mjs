@@ -8,8 +8,9 @@ const Calculator = {
 	error: {
 		missing_expression: 50,
 		unknown_variable: 51,
-		invalid_variable: 52,
-		invalid_parameters: 53
+		unknown_function: 52,
+		invalid_variable: 53,
+		invalid_parameters: 54
 	},
 
 	// Functions, constants, and variables
@@ -79,7 +80,7 @@ const Calculator = {
 				));
 
 			case Lexer.token.function: {
-				if(!this._functions[node.value]) return null;
+				if(!this._functions[node.value]) return { error: this.error.unknown_function };
 				let params = this._parseNode(node.params);
 
 				if(params === undefined) params = [];
@@ -201,6 +202,7 @@ const Calculator = {
 
 			case this.error.missing_expression: return "Missing Expression";
 			case this.error.unknown_variable: return "Unknown Variable";
+			case this.error.unknown_function: return "Unknown Function";
 			case this.error.invalid_variable: return "Invalid Variable Name";
 			case this.error.invalid_parameters: return "Invalid Parameters";
 
