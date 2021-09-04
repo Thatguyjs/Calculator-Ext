@@ -39,6 +39,7 @@ expect_eq_calc("64", "2 ^ 6");
 expect_eq_calc("1000", "10E2");
 expect_eq_calc("3", "30E-1");
 expect_eq_calc("720", "6!");
+expect_eq_calc("0.3", "0.1 + 0.2");
 
 // Multiple expressions, no variables
 expect_eq_calc("2, 5", "1 + 1, 2 + 3");
@@ -79,6 +80,8 @@ expect_eq_calc("3", "ceil(2.01)");
 // Errors
 expect_eq_calc("Invalid Operation", "(-1)!");
 expect_eq_calc("Invalid Expression", "()");
+expect_eq_calc("Invalid Expression", "(");
+expect_eq_calc("Invalid Expression", ")");
 expect_eq_calc("Unknown Variable", "4 + a");
 
 finish();

@@ -138,6 +138,7 @@ const Lexer = {
 
 			// Expression
 			else if(token.type === this.token.expression) {
+				// TODO: Catch other errors with invalid expressions (non-numeric input)
 				if(!token.data.length) {
 					return { error: this.error.invalid_expression };
 				}
@@ -426,6 +427,9 @@ const Lexer = {
 
 			current.push(tokens[t]);
 		}
+
+		if(depth !== 0)
+			return [[{ error: this.error.invalid_expression }]];
 
 		if(current.length) exprs.push(current);
 		return exprs;
