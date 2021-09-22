@@ -1,0 +1,3 @@
+[submodule "Calc-JS"]
+	path = Calc-JS
+	url = https://github.com/Thatguyjs/Calc-JS

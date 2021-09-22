@@ -1,88 +1,107 @@
-// Run this file to run tests
+import { expect_eq, finish } from "./lib.mjs";
 
-import { expect_eq, finish } from "./lib.js";
-import Calculator from "../calculate/calculate.mjs";
-import "../calculate/addons.mjs";
+import addons from "../popup/addons.mjs";
+import Calculator from "../Calc-JS/src/include.mjs";
 
+
+let test_results = { total: 0, passed: 0, failed: [] };
 
 function calculate(input) {
-	Calculator.clearVariables();
+	let result = Calculator.eval(input, addons.constants, addons.functions);
+	let res_list = [];
 
-	const results = Calculator.eval(input);
-	let resString = "";
+	for(let r in result)
+		res_list.push(result[r].error.has_error() ? result[r].error.message : result[r].value.toString());
 
-	for(let r in results) {
-		if(!results[r].error) resString += results[r].value.toString();
-		else resString += Calculator.errorMessage(results[r].error);
-		resString += ', ';
-	}
+	return res_list.join(', ');
+}
 
-	return resString.slice(0, -2);
+function test(input, expected) {
+	let res = expect_eq(expected, calculate(input), null, input);
+	if(res) res = expect_eq(expected, calculate(input.replaceAll(/\s+/g, '')), null, input);
+
+	return res;
 }
 
 
-function expect_eq_calc(result, input) {
-	return expect_eq(result, calculate(input));
-}
+// Basic number & order of operations tests
+test("1", "1");
+test("-1", "-1");
+test("110 + 50", "160");
+test("50 - 110", "-60");
+test("1 + 2 * 3", "7");
+test("110 + 50 + (4 - 2 * 5) - 10 + 40", "184");
+test("(110 + 50) * (2 - 4)", "-320");
+test("2 ^ 5 * (3 - 4)", "-32");
+test("2 ^ 6", "64");
+test("0 - 8 - 0 - 5 ^ 3", "-133");
+test("2E3", "2000");
+test("4! - 3", "21");
+test("-2^3", "-8");
+test("-2^4", "-16");
+test("2^-4", "0.0625");
+test("(-2)^4", "16");
 
+// Constants
+test("pi * 2.5", "7.853981634");
+test("2.5pi", "7.853981634");
 
-// Single operations / expressions
-expect_eq_calc("1", "1");
-expect_eq_calc("-1", "-1");
-expect_eq_calc("3", "1 + 2");
-expect_eq_calc("-17", "5 - 22");
-expect_eq_calc("3", "10 - 7");
-expect_eq_calc("6", "2 * 3");
-expect_eq_calc("4", "8 / 2");
-expect_eq_calc("2", "5 % 3");
-expect_eq_calc("64", "2 ^ 6");
-expect_eq_calc("1000", "10E2");
-expect_eq_calc("3", "30E-1");
-expect_eq_calc("720", "6!");
-expect_eq_calc("0.3", "0.1 + 0.2");
+// Tests from Calculator-Ext
+test("1", "1");
+test("-1", "-1");
+test("1 + 2", "3");
+test("5 - 22", "-17");
+test("10 - 7", "3");
+test("2 * 3", "6");
+test("8 / 2", "4");
+test("5 % 3", "2");
+test("2 ^ 6", "64");
+test("10E2", "1000");
+test("300E-2", "3");
+test("6!", "720");
+test("0.1 + 0.2", "0.3");
 
 // Multiple expressions, no variables
-expect_eq_calc("2, 5", "1 + 1, 2 + 3");
-expect_eq_calc("-14, 15", "7 - 21, 3 * 5");
-expect_eq_calc("2.5, 0.5", "5 / 2, 0.25 * 4 / 2");
-expect_eq_calc("1, 2, 3", "3 - 2, 2, 5 / 2 + 0.5");
+test("1 + 1, 2 + 3", "2, 5");
+test("7 - 21, 3 * 5", "-14, 15");
+test("5 / 2, 0.25 * 4 / 2", "2.5, 0.5");
+test("3 - 2, 2, 5 / 2 + 0.5", "1, 2, 3");
 
 // Implicit multiplication
-expect_eq_calc("6", "2(3)");
-expect_eq_calc("14", "(7)2");
-expect_eq_calc("18", "a = 3, 6a");
-expect_eq_calc("26", "2sqrt(169)");
-expect_eq_calc("39", "sqrt(169)3");
-expect_eq_calc("12", "(2)3!");
-expect_eq_calc("34", "a = 11, b = 3, (a)b + 1");
+test("2(3)", "6");
+test("(7)2", "14");
+test("a = 3, 6a", "18");
+test("2sqrt(169)", "26");
+test("sqrt(169)3", "39");
+test("(2)3!", "12");
+test("a = 11, b = 3, (a)b + 1", "34");
 
 // Variables (single & multiple expressions)
-expect_eq_calc("6", "a = 5, a + 1");
-expect_eq_calc("6", "a + 1, a = 5");
-expect_eq_calc("10", "a = 6, b = 4, a + b");
-expect_eq_calc("10", "a + b, a = 6, b = 4");
-expect_eq_calc("10", "a = 6, a + b, b = 4");
-expect_eq_calc("16", "a = 4 * 2, b = 16 / 4 + 4, a + b");
-expect_eq_calc("31, 42", "a = 31, b = a + 11, a, b");
-expect_eq_calc("31, 42", "a, b, a = 31, b = a + 11");
+test("a = 5, a + 1", "6");
+test("a + 1, a = 5", "6");
+test("a = 6, b = 4, a + b", "10");
+test("a + b, a = 6, b = 4", "10");
+test("a = 6, a + b, b = 4", "10");
+test("a = 4 * 2, b = 16 / 4 + 4, a + b", "16");
+test("a = 31, b = a + 11, a, b", "31, 42");
+test("a, b, a = 31, b = a + 11", "31, 42");
 
 // Functions & constants
-expect_eq_calc("3.1415926536", "pi");
-expect_eq_calc("2.7182818285", "e");
-expect_eq_calc("6", "sqrt(36)");
-expect_eq_calc("32", "sum(2, 5, 9, 16)");
-expect_eq_calc("0", "sum()");
-expect_eq_calc("0", "round(0.49)");
-expect_eq_calc("1", "round(0.5)");
-expect_eq_calc("4", "floor(4.99)");
-expect_eq_calc("3", "ceil(2.01)");
+test("pi", "3.1415926536");
+test("e", "2.7182818285");
+test("sqrt(36)", "6");
+test("sum(2, 5, 9, 16)", "32");
+test("sum()", "0");
+test("round(0.49)", "0");
+test("round(0.5)", "1");
+test("floor(4.99)", "4");
+test("ceil(2.01)", "3");
 
-// Errors
-expect_eq_calc("Invalid Operation", "(-1)!");
-expect_eq_calc("Invalid Expression", "()");
-expect_eq_calc("Invalid Expression", "(");
-expect_eq_calc("Invalid Expression", ")");
-expect_eq_calc("Unknown Variable", "4 + a");
-expect_eq_calc("Unknown Function", "notafunc(123, 456)");
+test("(-1)!", "Invalid Operation");
+test("()", "Invalid Expression");
+test("(", "Invalid Expression");
+test(")", "Invalid Expression");
+test("4 + a", "Unknown Variable");
+test("notafunc(123, 456)", "Unknown Function");
 
 finish();

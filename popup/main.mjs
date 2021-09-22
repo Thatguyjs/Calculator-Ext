@@ -1,7 +1,8 @@
 // Copyright (c) 2020 Thatguyjs All Rights Reserved.
 
+import addons from "./addons.mjs";
 import CalcHistory from "./history.mjs";
-import Calculator from "/calculate/calculate.mjs";
+import Calculator from "/Calc-JS/src/include.mjs";
 
 
 const Main = {
@@ -28,21 +29,17 @@ const Main = {
 	// Evalulate an equation
 	calculate: function() {
 		if(!input.value.length) return;
-		Calculator.clearVariables();
 
-		const results = Calculator.eval(input.value);
-		let resString = "";
+		const results = Calculator.eval(input.value, addons.constants, addons.functions);
+		let res_data = [];
 
 		for(let r in results) {
-			if(!results[r].error) resString += results[r].value.toString();
-			else resString += Calculator.errorMessage(results[r].error);
-			resString += ', ';
+			res_data.push(results[r].error.has_error() ? results[r].error.message : results[r].value.toString());
 		}
 
-		resString = resString.slice(0, -2);
-
-		CalcHistory.store(input.value, resString);
-		input.value = resString;
+		let res_string = res_data.join(', ');
+		CalcHistory.store(input.value, res_string);
+		input.value = res_string;
 	}
 
 };
