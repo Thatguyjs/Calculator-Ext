@@ -1,5 +1,8 @@
 // Constants and functions for the calculator
 
+// Substitute for `./buttons.mjs`
+const Buttons = { getAngleMode: () => { return 'radians'; } };
+
 
 // Allow functions to take token input
 function tk_wrap(call) {
@@ -14,31 +17,91 @@ function tk_wrap(call) {
 }
 
 
-export default {
+const addons = {
 	constants: {
 		"pi": Math.PI,
 		"e": Math.E
 	},
 
 	functions: {
-		sin: tk_wrap(Math.sin),
-		cos: tk_wrap(Math.cos),
-		tan: tk_wrap(Math.tan),
+		abs: Math.abs,
 
-		sqrt: tk_wrap(Math.sqrt),
-		cbrt: tk_wrap(Math.cbrt),
+		rand: (min=1, max=0) => {
+			if(max < min) {
+				let tmp = max;
+				max = min;
+				min = max;
+			}
 
-		floor: tk_wrap(Math.floor),
-		round: tk_wrap(Math.round),
-		ceil: tk_wrap(Math.ceil),
+			return Math.random() * (max - min) + min;
+		},
 
-		sum: tk_wrap((...nums) => {
+		sum: (...nums) => {
 			let total = 0;
 
 			for(let n in nums)
 				total += nums[n];
 
 			return total;
-		})
+		},
+
+		sumrange: (start, stop) => {
+			if(start < stop) {
+				let tmp = start;
+				start = stop;
+				stop = start;
+			}
+
+			let total = 0;
+
+			for(let i = start; i <= stop; i++)
+				total += i;
+
+			return total;
+		},
+
+		sqrt: Math.sqrt,
+		cbrt: Math.cbrt,
+
+		floor: Math.floor,
+		round: Math.round,
+		ceil: Math.ceil,
+
+		sin: (value) => {
+			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			return Math.sin(value);
+		},
+		asin: (value) => {
+			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			return Math.asin(value) * mult;
+		},
+
+		cos: (value) => {
+			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			return Math.cos(value);
+		},
+		acos: (value) => {
+			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			return Math.acos(value) * mult;
+		},
+
+		tan: (value) => {
+			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			return Math.tan(value);
+		},
+		atan: (value) => {
+			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			return Math.atan(value) * mult;
+		},
+
+		log: Math.log10,
+		ln: Math.log
 	}
 };
+
+
+for(let f in addons.functions) {
+	addons.functions[f] = tk_wrap(addons.functions[f]);
+}
+
+export default addons;
