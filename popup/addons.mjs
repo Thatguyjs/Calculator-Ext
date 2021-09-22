@@ -9,8 +9,14 @@ function tk_wrap(call) {
 	return function(...tokens) {
 		let nums = [];
 
-		for(let t in tokens)
-			nums.push(tokens[t].data);
+		for(let t in tokens) {
+			if(tokens[t].modifier.negative) {
+				tokens[t].data = -tokens[t].data;
+				tokens[t].modifier.negative = false;
+			}
+
+			nums.unshift(tokens[t].data);
+		}
 
 		return call(...nums);
 	}
@@ -30,7 +36,7 @@ const addons = {
 			if(max < min) {
 				let tmp = max;
 				max = min;
-				min = max;
+				min = tmp;
 			}
 
 			return Math.random() * (max - min) + min;
@@ -46,10 +52,10 @@ const addons = {
 		},
 
 		sumrange: (start, stop) => {
-			if(start < stop) {
+			if(stop < start) {
 				let tmp = start;
 				start = stop;
-				stop = start;
+				stop = tmp;
 			}
 
 			let total = 0;

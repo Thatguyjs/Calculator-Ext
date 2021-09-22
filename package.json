@@ -1,7 +1,7 @@
 {
 	"name": "Calculator",
 	"description": "A scientific calculator",
-	"version": "3.0.4",
+	"version": "3.0.6",
 	"scripts": {
 		"test": "node tests/index.mjs"
 	}
