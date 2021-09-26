@@ -69,6 +69,12 @@ test("x, x = 4", "4");
 test("x = -2, x", "-2");
 test("x, x = -2", "-2");
 
+// Functions
+test("max(-1, 5)", "5");
+test("max(1, 2, 3, 4)", "4");
+test("min(-1, 5)", "-1");
+test("min(4, 3, 2, 1)", "1");
+
 // Macros
 test("hex(ff)", "255");
 test("hex(1fc8)", "8136");

@@ -87,6 +87,9 @@ const addons = {
 		round: Math.round,
 		ceil: Math.ceil,
 
+		max: (...args) => Math.max.apply(Math, args),
+		min: (...args) => Math.min.apply(Math, args),
+
 		sin: (value) => {
 			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
 			return Math.sin(value);
@@ -128,10 +131,6 @@ const addons = {
 		},
 		bin: (tokens) => {
 			return [new Token(Token.Number, Number(`0b${join_tokens(tokens)}`), { negative: false })];
-		},
-
-		foreach: (var_def, var_cmp, equation) => {
-
 		}
 	}
 };
