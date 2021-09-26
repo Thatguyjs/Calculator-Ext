@@ -25,6 +25,17 @@ function tk_wrap(call) {
 }
 
 
+// Join token data together into a string (for macros)
+function join_tokens(tokens) {
+	let str = "";
+
+	for(let t in tokens)
+		str += tokens[t].data.toString();
+
+	return str;
+}
+
+
 const addons = {
 	constants: {
 		"pi": Math.PI,
@@ -109,6 +120,16 @@ const addons = {
 
 
 	macros: {
+		hex: (tokens) => {
+			return [new Token(Token.Number, Number(`0x${join_tokens(tokens)}`), { negative: false })];
+		},
+		oct: (tokens) => {
+			return [new Token(Token.Number, Number(`0o${join_tokens(tokens)}`), { negative: false })];
+		},
+		bin: (tokens) => {
+			return [new Token(Token.Number, Number(`0b${join_tokens(tokens)}`), { negative: false })];
+		},
+
 		foreach: (var_def, var_cmp, equation) => {
 
 		}

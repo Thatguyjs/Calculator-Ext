@@ -6,7 +6,7 @@ import Calculator from "../Calc-JS/src/include.mjs";
 let test_results = { total: 0, passed: 0, failed: [] };
 
 function calculate(input) {
-	let result = Calculator.eval(input, addons.constants, addons.functions);
+	let result = Calculator.eval(input, addons.constants, addons.functions, addons.macros);
 	let res_list = [];
 
 	for(let r in result)
@@ -68,6 +68,15 @@ test("x = 4, x", "4");
 test("x, x = 4", "4");
 test("x = -2, x", "-2");
 test("x, x = -2", "-2");
+
+// Macros
+test("hex(ff)", "255");
+test("hex(1fc8)", "8136");
+test("oct(173)", "123");
+test("oct(17710)", "8136");
+test("bin(10)", "2");
+test("bin(111)", "7");
+test("bin(1111111001000)", "8136");
 
 // Tests from Calculator-Ext
 test("1", "1");

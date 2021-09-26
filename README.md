@@ -37,6 +37,11 @@ A calculator extension for Chrome
 - log (logarithm)
 - ln (natural logarithm)
 
+### Macros
+- hex (convert a hexadecimal number to decimal)
+- oct (convert an octal number to decimal)
+- bin (convert a binary number to decimal)
+
 ### Expressions
 - Expressions can be separated by using commas (,) in the input field
 - Each expression will be evaluated separately, and the results will be displayed in the same order as the input
