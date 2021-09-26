@@ -28,6 +28,10 @@ function test(input, expected) {
 // Basic number & order of operations tests
 test("1", "1");
 test("-1", "-1");
+test("2 + -3", "-1");
+test("-3 + 5", "2");
+test("-3 * 5", "-15");
+test("-3 / 2", "-1.5");
 test("110 + 50", "160");
 test("50 - 110", "-60");
 test("1 + 2 * 3", "7");
@@ -42,6 +46,18 @@ test("-2^3", "-8");
 test("-2^4", "-16");
 test("2^-4", "0.0625");
 test("(-2)^4", "16");
+
+// Boolean & Bitwise operators
+test("1 > 2", "0");
+test("1 < 2", "1");
+test("-3 + 5 > 2", "0");
+test("-3 + 5 > 1.99", "1");
+test("-3 + 5 < 2.01", "1");
+test("2 | 8", "10");
+test("3 | 2", "3");
+test("7 & 2", "2");
+test("7 & 2 > 1.99", "1");
+test("7 & 2 < 2.01", "1");
 
 // Constants
 test("pi * 2.5", "7.853981634");
@@ -103,6 +119,7 @@ test("round(0.49)", "0");
 test("round(0.5)", "1");
 test("floor(4.99)", "4");
 test("ceil(2.01)", "3");
+test("sum(2 + 3 / 2, 4 * 5)", "23.5");
 
 test("(-1)!", "Invalid Operation");
 test("( )", "Invalid Expression");

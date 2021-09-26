@@ -109,7 +109,9 @@ const addons = {
 
 
 	macros: {
+		foreach: (var_def, var_cmp, equation) => {
 
+		}
 	}
 };
 
