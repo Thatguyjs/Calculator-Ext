@@ -1,5 +1,7 @@
 // Constants and functions for the calculator
 
+import { Token } from "../Calc-JS/src/include.mjs";
+
 // Substitute for `./buttons.mjs`
 const Buttons = { getAngleMode: () => { return 'radians'; } };
 
@@ -18,7 +20,7 @@ function tk_wrap(call) {
 			nums.unshift(tokens[t].data);
 		}
 
-		return call(...nums);
+		return [new Token(Token.Number, call(...nums))];
 	}
 }
 
@@ -28,6 +30,7 @@ const addons = {
 		"pi": Math.PI,
 		"e": Math.E
 	},
+
 
 	functions: {
 		abs: Math.abs,
@@ -102,6 +105,11 @@ const addons = {
 
 		log: Math.log10,
 		ln: Math.log
+	},
+
+
+	macros: {
+
 	}
 };
 

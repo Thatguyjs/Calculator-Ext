@@ -30,7 +30,7 @@ const Main = {
 	calculate: function() {
 		if(!input.value.length) return;
 
-		const results = Calculator.eval(input.value, addons.constants, addons.functions);
+		const results = Calculator.eval(input.value, addons.constants, addons.functions, addons.macros);
 		let res_data = [];
 
 		for(let r in results) {
