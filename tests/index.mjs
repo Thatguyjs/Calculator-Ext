@@ -6,7 +6,7 @@ import Calculator from "../Calc-JS/src/include.mjs";
 let test_results = { total: 0, passed: 0, failed: [] };
 
 function calculate(input) {
-	let result = Calculator.eval(input, addons.constants, addons.functions, addons.macros);
+	let result = Calculator.eval(input, addons);
 	let res_list = [];
 
 	for(let r in result)
@@ -83,6 +83,7 @@ test("oct(17710)", "8136");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
+// test("convert(100 meters, feet)", "328.08399");
 
 // Tests from Calculator-Ext
 test("1", "1");

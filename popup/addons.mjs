@@ -1,6 +1,7 @@
 // Constants and functions for the calculator
 
-import { Token } from "../Calc-JS/src/include.mjs";
+import Calculator, { Token } from "../Calc-JS/src/include.mjs";
+import Converter from "./convert.mjs";
 
 // Substitute for `./buttons.mjs`
 const Buttons = { getAngleMode: () => { return 'radians'; } };
@@ -131,6 +132,16 @@ const addons = {
 		},
 		bin: (tokens) => {
 			return [new Token(Token.Number, Number(`0b${join_tokens(tokens)}`), { negative: false })];
+		},
+
+		convert: (from, to) => {
+			const from_val = Calculator.eval_tokens(from.slice(0, -1))[0].value; // TODO: Check for errors
+			const from_type = from[from.length - 1].data;
+			const to_type = to[0].data;
+
+			let result = Converter.convert(from_val, from_type, to_type);
+
+			return [new Token(Token.Number, result, { negative: false })];
 		}
 	}
 };
