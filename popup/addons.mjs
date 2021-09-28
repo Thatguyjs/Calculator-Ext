@@ -135,6 +135,11 @@ const addons = {
 		},
 
 		convert: (from, to) => {
+			if(from.length > 3 && from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
+				to = from.slice(-1);
+				from = from.slice(0, -2);
+			}
+
 			const from_val = Calculator.eval_tokens(from.slice(0, -1))[0].value; // TODO: Check for errors
 			const from_type = from[from.length - 1].data;
 			const to_type = to[0].data;

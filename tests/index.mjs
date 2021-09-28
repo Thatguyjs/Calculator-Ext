@@ -15,11 +15,13 @@ function calculate(input) {
 	return res_list.join(', ');
 }
 
-function test(input, expected) {
+function test(input, expected, without_space=true) {
 	let res = expect_eq(expected, calculate(input), null, input);
 
-	const stripped_input = input.replaceAll(/\s+/g, '');
-	if(res && stripped_input !== input) res = expect_eq(expected, calculate(stripped_input), null, stripped_input);
+	if(without_space) {
+		const stripped_input = input.replaceAll(/\s+/g, '');
+		if(res && stripped_input !== input) res = expect_eq(expected, calculate(stripped_input), null, stripped_input);
+	}
 
 	return res;
 }
@@ -83,14 +85,14 @@ test("oct(17710)", "8136");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
-test("convert(100 meters, feet)", "328.08399");
+test("convert(100 meters as feet)", "328.08399", false);
 test("convert(4.5 yd, mi)", "0.0025568133");
-test("convert(96 kg, lb)", "211.6437950272");
+test("convert(48 * 2 kg to lb)", "211.6437950272", false);
 test("convert(42 oz, dram)", "672");
-test("convert(180 deg, rad)", "3.1415926536");
+test("convert(360 / 2 deg as rad)", "3.1415926536", false);
 test("convert(1 rad, deg)", "57.2957795131");
-test("convert(600 secs, days)", "0.0069444444");
-test("convert(0.4 yr, mins)", "210239.695152442");
+test("convert(600 secs to days)", "0.0069444444", false);
+test("convert(1 - 0.6 yr, mins)", "210239.695152442");
 
 // Tests from Calculator-Ext
 test("1", "1");
