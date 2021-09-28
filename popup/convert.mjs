@@ -24,15 +24,15 @@ const Converter = {
 	},
 	mass: {
 		Milligram: { id: 0, type: 'mass' },
-		Gram: { id: 1, type: 'mass' },
-		Dram: { id: 2, type: 'mass' },
-		Grain: { id: 3, type: 'mass' },
+		Grain: { id: 1, type: 'mass' },
+		Gram: { id: 2, type: 'mass' },
+		Dram: { id: 3, type: 'mass' },
 		Ounce: { id: 4, type: 'mass' },
 		Pound: { id: 5, type: 'mass' },
-		Stone: { id: 6, type: 'mass' },
-		Kilogram: { id: 7, type: 'mass' },
-		Ton: { id: 8, type: 'mass' },
-		Tonne: { id: 9, type: 'mass' }
+		Kilogram: { id: 6, type: 'mass' },
+		Stone: { id: 7, type: 'mass' },
+		Tonne: { id: 8, type: 'mass' },
+		Ton: { id: 9, type: 'mass' }
 	},
 	angle: {
 		Radian: { id: 0, type: 'angle' },
@@ -180,10 +180,12 @@ const Converter = {
 			case 'second':
 			case 'seconds':
 			case 'sec':
+			case 'secs':
 				return Converter.time.Second;
 			case 'minute':
 			case 'minutes':
 			case 'min':
+			case 'mins':
 				return Converter.time.Minute;
 			case 'hour':
 			case 'hours':
@@ -217,19 +219,110 @@ const Converter = {
 		}
 	},
 
-	is_type(t1, t2) {
-		return t1.id === t2.id && t1.type === t2.type;
-	},
-
 
 	convert_length(value, from, to) {
-		if(typeof from === 'string') from = Converter.type(from.trim());
-		if(typeof to === 'string') to = Converter.type(to.trim());
+		if(from.type !== 'length' || to.type !== 'length') return null;
+		if(from.id === to.id) return value;
 
-		console.log("Converting", value, "from", from, "to", to);
+		// Central conversion: meter
+		const rates = [
+			1000,      // mm
+			100,       // cm
+			10,        // dm
+			3.2808399, // ft
+			1.0936133, // yd
+			1,         // m
+			0.001,     // km
+			0.00062137 // mi
+		];
+
+		value = value / rates[from.id];
+		return value * rates[to.id];
 	},
 
 
+	convert_area(value, from, to) {
+		if(from.type !== 'area' || to.type !== 'area') return null;
+		if(from.id === to.id) return value;
+
+		// Central conversion: Are
+		const rates = [
+			155000.31,  // sq. in
+			1076.39104, // sq. ft
+			119.599005, // sq. yd
+			100,        // sq. m
+			1,          // are
+			0.02471054, // acre
+			0.01        // hectare
+		];
+
+		value = value / rates[from.id];
+		return value * rates[to.id];
+	},
+
+
+	convert_mass(value, from, to) {
+		if(from.type !== 'mass' || to.type !== 'mass') return null;
+		if(from.id === to.id) return value;
+
+		// Central conversion: Ounce
+		const rates = [
+			28349.5231, // mg
+			437.5,      // grain
+			28.3495231, // g
+			16,         // dram
+			1,          // oz
+			0.0625,     // lb
+			0.02834952, // kg
+			0.00446429, // stone
+			0.00002835, // tonne (metric)
+			0.0000279   // ton (imperial)
+		];
+
+		value = value / rates[from.id];
+		return value * rates[to.id];
+	},
+
+
+	convert_angle(value, from, to) {
+		if(from.type !== 'angle' || to.type !== 'angle') return null;
+		if(from.id === to.id) return value;
+
+		// Central conversion: Radians
+		const rates = [
+			1,            // rad
+			180 / Math.PI // deg
+		];
+
+		value = value / rates[from.id];
+		return value * rates[to.id];
+	},
+
+
+	convert_time(value, from, to) {
+		if(from.type !== 'time' || to.type !== 'time') return null;
+		if(from.id === to.id) return value;
+
+		// Central conversion: Day
+		const rates = [
+			8.6400e+10, // microsecond
+			86400000,   // millisecond
+			86400,      // second
+			1440,       // minute
+			24,         // hour
+			1,          // day
+			0.14285714, // week
+			0.00273973, // year
+			0.00027397, // decade
+			0.00002739  // century
+		];
+
+		value = value / rates[from.id];
+		return value * rates[to.id];
+	},
+
+
+	// Automatically detect types and choose the right function
 	convert(value, from, to) {
 		if(typeof from === 'string') from = Converter.type(from.trim());
 		if(typeof to === 'string') to = Converter.type(to.trim());
@@ -238,9 +331,13 @@ const Converter = {
 			case 'length':
 				return Converter.convert_length(value, from, to);
 			case 'area':
-				break;
+				return Converter.convert_area(value, from, to);
 			case 'mass':
-				break;
+				return Converter.convert_mass(value, from, to);
+			case 'angle':
+				return Converter.convert_angle(value, from, to);
+			case 'time':
+				return Converter.convert_time(value, from, to);
 
 			default:
 				return null;

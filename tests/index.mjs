@@ -83,7 +83,14 @@ test("oct(17710)", "8136");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
-// test("convert(100 meters, feet)", "328.08399");
+test("convert(100 meters, feet)", "328.08399");
+test("convert(4.5 yd, mi)", "0.0025568133");
+test("convert(96 kg, lb)", "211.6437950272");
+test("convert(42 oz, dram)", "672");
+test("convert(180 deg, rad)", "3.1415926536");
+test("convert(1 rad, deg)", "57.2957795131");
+test("convert(600 secs, days)", "0.0069444444");
+test("convert(0.4 yr, mins)", "210239.695152442");
 
 // Tests from Calculator-Ext
 test("1", "1");
