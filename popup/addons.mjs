@@ -3,8 +3,12 @@
 import Calculator, { Token } from "../Calc-JS/src/include.mjs";
 import Converter from "./convert.mjs";
 
-// Substitute for `./buttons.mjs`
-const Buttons = { getAngleMode: () => { return 'radians'; } };
+let Buttons = null;
+
+if(typeof window !== 'undefined')
+	Buttons = (await import("./buttons.mjs")).default;
+else
+	Buttons = { getAngleMode: () => { return 'radians'; } };
 
 
 // Allow functions to take token input

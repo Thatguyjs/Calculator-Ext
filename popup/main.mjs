@@ -8,7 +8,7 @@ import Calculator from "/Calc-JS/src/include.mjs";
 const Main = {
 
 	// Initialize
-	init: async function() {
+	init: function() {
 		input.focus();
 
 		input.addEventListener('focusout', () => {

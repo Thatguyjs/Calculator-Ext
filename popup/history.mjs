@@ -46,10 +46,6 @@ const CalcHistory = {
 			input.value = node.result;
 		});
 
-		// container.addEventListener('click', () => {
-		// 	input.value = node.equation;
-		// });
-
 		this._list.insertBefore(container, this._list.children[0]);
 	},
 
