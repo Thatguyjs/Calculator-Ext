@@ -1,3 +1,4 @@
+// Copyright (c) 2021 Thatguyjs All Rights Reserved.
 // Constants and functions for the calculator
 
 import Calculator, { Token } from "../Calc-JS/src/include.mjs";

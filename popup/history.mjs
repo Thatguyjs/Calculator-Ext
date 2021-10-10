@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Thatguyjs All Rights Reserved.
+// Copyright (c) 2021 Thatguyjs All Rights Reserved.
 
 import Buttons from "./buttons.mjs";
 
@@ -9,20 +9,17 @@ const CalcHistory = {
 	_button: document.getElementById('history-toggle'),
 	_list: document.getElementById('history-entries'),
 
-
 	// Active equation
 	active: "",
 
-
 	// Last result
 	last: { equation: "", result: "", error: 0 },
-
 
 	// All stored results
 	stored: [],
 
 
-	// Add an equation to the entries list
+	// Add an equation to the DOM history list
 	_addEquation: function(node) {
 		let container = document.createElement('div');
 
@@ -54,6 +51,7 @@ const CalcHistory = {
 	init: function() {
 		this.load();
 
+		// Save input when it's updated
 		input.addEventListener('keyup', () => {
 			if(input.value !== this.active) {
 				chrome.storage.local.set({ 'active': input.value });
@@ -63,6 +61,8 @@ const CalcHistory = {
 
 		this._button.addEventListener('click', () => {
 			this._list.classList.toggle('hidden');
+			// IDEA: Animation when the history appears / disappears?
+			// this._list.classList.toggle('anim-history');
 		});
 	},
 
@@ -86,7 +86,6 @@ const CalcHistory = {
 		});
 	},
 
-
 	// Store a new equation
 	store: function(equation, result) {
 		if(this.last.equation === equation || equation === result) return;
@@ -97,16 +96,14 @@ const CalcHistory = {
 		this.last = { equation, result };
 		this._addEquation(this.last);
 
-		while(this._list.children.length > 25) {
+		while(this._list.children.length > 25)
 			this._list.removeChild(this._list.lastChild);
-		}
 
 		this.stored.unshift(this.last);
 		while(this.stored.length > 25) this.stored.pop();
 
 		chrome.storage.local.set({ history: this.stored });
 	},
-
 
 	// Store the selected angle mode
 	storeAngleMode: function(mode) {

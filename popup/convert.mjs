@@ -1,3 +1,4 @@
+// Copyright (c) 2021 Thatguyjs All Rights Reserved.
 // Convert many different types
 
 
