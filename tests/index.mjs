@@ -80,11 +80,14 @@ test("min(4, 3, 2, 1)", "1");
 // Macros
 test("hex(ff)", "255");
 test("hex(1fc8)", "8136");
+test("hex(fg)", "Invalid Hex String");
 test("oct(173)", "123");
 test("oct(17710)", "8136");
+test("oct(79)", "Invalid Octal String");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
+test("bin(2)", "Invalid Binary String");
 test("convert(100 meters as feet)", "328.08399", false);
 test("convert(4.5 yd, mi)", "0.0025568133");
 test("convert(48 * 2 kg to lb)", "211.6437950272", false);
@@ -93,6 +96,9 @@ test("convert(360 / 2 deg as rad)", "3.1415926536", false);
 test("convert(1 rad, deg)", "57.2957795131");
 test("convert(600 secs to days)", "0.0069444444", false);
 test("convert(1 - 0.6 yr, mins)", "210239.695152442");
+test("convert()", "Missing Parameters");
+test("convert(2 meters)", "Missing Parameters");
+test("convert(25 programmers to people)", "Unknown Unit", false);
 
 // Tests from Calculator-Ext
 test("1", "1");

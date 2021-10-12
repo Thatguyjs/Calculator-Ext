@@ -221,6 +221,11 @@ const Converter = {
 	},
 
 
+	has_type(type) {
+		return Converter.type(type) !== Converter.Unknown;
+	},
+
+
 	convert_length(value, from, to) {
 		if(from.type !== 'length' || to.type !== 'length') return null;
 		if(from.id === to.id) return value;

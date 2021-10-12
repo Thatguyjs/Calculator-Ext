@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Thatguyjs All Rights Reserved.
 // Constants and functions for the calculator
 
-import Calculator, { Token } from "../Calc-JS/src/include.mjs";
+import Calculator, { Token, Err } from "../Calc-JS/src/include.mjs";
 import Converter from "./convert.mjs";
 
 let Buttons = null;
@@ -130,24 +130,38 @@ const addons = {
 
 	macros: {
 		hex: (tokens) => {
-			return [new Token(Token.Number, Number(`0x${join_tokens(tokens)}`), { negative: false })];
+			let res = Number(`0x${join_tokens(tokens)}`);
+			if(isNaN(res)) return new Err(Err.Other, "Invalid Hex String");
+
+			return [new Token(Token.Number, res, { negative: false })];
 		},
 		oct: (tokens) => {
-			return [new Token(Token.Number, Number(`0o${join_tokens(tokens)}`), { negative: false })];
+			let res = Number(`0o${join_tokens(tokens)}`);
+			if(isNaN(res)) return new Err(Err.Other, "Invalid Octal String");
+
+			return [new Token(Token.Number, res, { negative: false })];
 		},
 		bin: (tokens) => {
-			return [new Token(Token.Number, Number(`0b${join_tokens(tokens)}`), { negative: false })];
+			let res = Number(`0b${join_tokens(tokens)}`);
+			if(isNaN(res)) return new Err(Err.Other, "Invalid Binary String");
+
+			return [new Token(Token.Number, res, { negative: false })];
 		},
 
 		convert: (from, to) => {
-			if(from.length > 3 && from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
+			if(!from) return new Err(Err.Other, "Missing Parameters");
+			else if(from.length > 3 && from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
 				to = from.slice(-1);
 				from = from.slice(0, -2);
 			}
+			else if(!to) return new Err(Err.Other, "Missing Parameters");
 
 			const from_val = Calculator.eval_tokens(from.slice(0, -1))[0].value; // TODO: Check for errors
 			const from_type = from[from.length - 1].data;
 			const to_type = to[0].data;
+
+			if(!Converter.has_type(from_type) || !Converter.has_type(to_type))
+				return new Err(Err.Other, "Unknown Unit");
 
 			let result = Converter.convert(from_val, from_type, to_type);
 
