@@ -15,7 +15,6 @@ const Buttons = {
 
 	// Change the angle mode
 	setAngleMode: function(mode) {
-		let initial = Buttons.getAngleMode();
 		let otherMode = mode === 'degrees' ? 'radians' : 'degrees';
 
 		if(mode === 'degrees' || mode === 'radians') {

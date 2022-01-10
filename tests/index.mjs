@@ -80,13 +80,16 @@ test("min(4, 3, 2, 1)", "1");
 // Macros
 test("hex(ff)", "255");
 test("hex(1fc8)", "8136");
+test("hex(0x1fc8)", "8136");
 test("hex(fg)", "Invalid Hex String");
 test("oct(173)", "123");
 test("oct(17710)", "8136");
+test("oct(0o17710)", "8136");
 test("oct(79)", "Invalid Octal String");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
+test("bin(0b1111111001000)", "8136");
 test("bin(2)", "Invalid Binary String");
 test("convert(100 meters as feet)", "328.08399", false);
 test("convert(4.5 yd, mi)", "0.0025568133");

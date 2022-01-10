@@ -130,19 +130,22 @@ const addons = {
 
 	macros: {
 		hex: (tokens) => {
-			let res = Number(`0x${join_tokens(tokens)}`);
+			let tk_string = join_tokens(tokens);
+			let res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Hex String");
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		oct: (tokens) => {
-			let res = Number(`0o${join_tokens(tokens)}`);
+			let tk_string = join_tokens(tokens);
+			let res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Octal String");
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		bin: (tokens) => {
-			let res = Number(`0b${join_tokens(tokens)}`);
+			let tk_string = join_tokens(tokens);
+			let res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Binary String");
 
 			return [new Token(Token.Number, res, { negative: false })];
@@ -150,7 +153,7 @@ const addons = {
 
 		convert: (from, to) => {
 			if(!from) return new Err(Err.Other, "Missing Parameters");
-			else if(from.length > 3 && from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
+			else if(from.length > 3 && ['as', 'to', 'in'].includes(from[from.length - 2].data)) { // from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
 				to = from.slice(-1);
 				from = from.slice(0, -2);
 			}

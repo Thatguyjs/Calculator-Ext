@@ -22,7 +22,7 @@ const Main = {
 			input.focus();
 		});
 
-		input.addEventListener('keyup', (event) => {
+		input.addEventListener('keyup', () => {
 			if(this.input_state.current === 'live')
 				this.input_state.live = input.value;
 		});
