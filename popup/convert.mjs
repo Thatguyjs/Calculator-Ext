@@ -171,7 +171,7 @@ const Converter = {
 
 			case 'microsecond':
 			case 'microseconds':
-			case 'ms;':
+			case 'us':
 			case 'µs':
 				return Converter.time.Microsecond;
 			case 'millisecond':
