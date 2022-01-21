@@ -76,7 +76,12 @@ const Main = {
 		let res_data = [];
 
 		for(let r in results) {
-			res_data.push(results[r].error.has_error() ? results[r].error.message : results[r].value.toString());
+			let val = results[r].value;
+
+			if(Array.isArray(val)) val = `[${val.join(', ')}]`;
+			else val = val?.toString();
+
+			res_data.push(results[r].error.has_error() ? results[r].error.message : val);
 		}
 
 		let res_string = res_data.join(', ');

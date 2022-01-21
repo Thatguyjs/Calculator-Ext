@@ -9,8 +9,14 @@ function calculate(input) {
 	let result = Calculator.eval(input, addons);
 	let res_list = [];
 
-	for(let r in result)
-		res_list.push(result[r].error.has_error() ? result[r].error.message : result[r].value.toString());
+	for(let r in result) {
+		let val = result[r].value;
+
+		if(Array.isArray(val)) val = `[${val.join(', ')}]`;
+		else val = val?.toString();
+
+		res_list.push(result[r].error.has_error() ? result[r].error.message : val);
+	}
 
 	return res_list.join(', ');
 }
@@ -76,6 +82,13 @@ test("max(-1, 5)", "5");
 test("max(1, 2, 3, 4)", "4");
 test("min(-1, 5)", "-1");
 test("min(4, 3, 2, 1)", "1");
+test("isprime(1)", "0");
+test("isprime(497)", "0");
+test("isprime(499)", "1");
+test("gcd(6, 9)", "3");
+test("gcf(0, 4)", "4");
+test("gcd(4, 0)", "4");
+test("gcf(230, 590)", "10");
 
 // Macros
 test("hex(ff)", "255");
@@ -102,6 +115,9 @@ test("convert(1 - 0.6 yr, mins)", "210239.695152442");
 test("convert()", "Missing Parameters");
 test("convert(2 meters)", "Missing Parameters");
 test("convert(25 programmers to people)", "Unknown Unit", false);
+test("f(x, x + 2, 0, 4)", "[2, 3, 4, 5, 6]");
+test("f(y, y * 4, -1, 1, 0.25)", "[-4, -3, -2, -1, 0, 1, 2, 3, 4]");
+test("f(x, -x, -3, 3)", "[3, 2, 1, 0, -1, -2, -3]");
 
 // Tests from Calculator-Ext
 test("1", "1");

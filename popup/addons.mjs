@@ -23,13 +23,12 @@ function tk_wrap(call) {
 				tokens[t].modifier.negative = false;
 			}
 
-			nums.unshift(tokens[t].data);
+			nums.push(tokens[t].data);
 		}
 
 		return [new Token(Token.Number, call(...nums))];
 	}
 }
-
 
 // Join token data together into a string (for macros)
 function join_tokens(tokens) {
@@ -39,6 +38,25 @@ function join_tokens(tokens) {
 		str += tokens[t].data.toString();
 
 	return str;
+}
+
+// Extract the inner value of a token
+function parse(token, type) {
+	switch(type) {
+		case Token.Number:
+			if(token.modifier.negative) return -token.data;
+			else return token.data;
+
+		case Token.List:
+			if(token.modifier.negative) return token.data.map(n => -n);
+			else return token.data;
+
+		case Token.Name:
+			return token.data;
+
+		default:
+			return null;
+	}
 }
 
 
@@ -124,7 +142,35 @@ const addons = {
 		},
 
 		log: Math.log10,
-		ln: Math.log
+		ln: Math.log,
+
+		// https://en.wikipedia.org/wiki/Primality_test#JavaScript
+		isprime: (value) => {
+			if(value <= 3) return +(value > 1);
+			if(value % 2 === 0 || value % 3 === 0) return 0;
+
+			let count = 5;
+
+			while(count ** 2 <= value) {
+				if(value % count === 0 || value % (count + 2) === 0) return 0;
+				count += 6;
+			}
+
+			return 1;
+		},
+
+		// https://en.wikipedia.org/wiki/Euclidean_algorithm
+		gcd: (num, den) => {
+			if(!Number.isInteger(num) || !Number.isInteger(den)) return 0;
+
+			while(num > 0) {
+				const temp = num;
+				num = den % num;
+				den = temp;
+			}
+
+			return den;
+		}
 	},
 
 
@@ -153,7 +199,7 @@ const addons = {
 
 		convert: (from, to) => {
 			if(!from) return new Err(Err.Other, "Missing Parameters");
-			else if(from.length > 3 && ['as', 'to', 'in'].includes(from[from.length - 2].data)) { // from[from.length - 2].data === 'as' || from[from.length - 2].data === 'to') {
+			else if(from.length > 3 && ['as', 'to', 'in'].includes(from[from.length - 2].data)) {
 				to = from.slice(-1);
 				from = from.slice(0, -2);
 			}
@@ -169,10 +215,49 @@ const addons = {
 			let result = Converter.convert(from_val, from_type, to_type);
 
 			return [new Token(Token.Number, result, { negative: false })];
+		},
+
+		f: (var_name, equation, start, stop, step) => {
+			var_name = parse(var_name[0], Token.Name);
+			start = parse(start[0], Token.Number);
+			stop = parse(stop[0], Token.Number);
+
+			if(!step) step = 1;
+			else step = parse(step[0], Token.Number);
+
+			if(Math.abs(start - stop) / step > 100)
+				return new Err(Err.Other, "Step size too small");
+
+			if(start > stop && step > 0)
+				step = -step;
+
+			let calc_addons = { ...addons };
+			let results = [];
+
+			while(start <= stop) {
+				calc_addons.constants[var_name] = start;
+				let result = Calculator.eval_tokens(equation, calc_addons);
+
+				for(let r in result) {
+					if(result[r].error.has_error())
+						return result[r].error;
+
+					if(Array.isArray(result[r].value))
+						results.push(new Token(Token.List, result[r].value, { negative: false }));
+					else
+						results.push(new Token(Token.Number, result[r].value, { negative: false }));
+				}
+
+				start += step;
+			}
+
+			return [new Token(Token.List, results, { negative: false })];
 		}
 	}
 };
 
+
+addons.functions.gcf = addons.functions.gcd;
 
 for(let f in addons.functions) {
 	addons.functions[f] = tk_wrap(addons.functions[f]);
