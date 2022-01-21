@@ -115,6 +115,10 @@ test("convert(1 - 0.6 yr, mins)", "210239.695152442");
 test("convert()", "Missing Parameters");
 test("convert(2 meters)", "Missing Parameters");
 test("convert(25 programmers to people)", "Unknown Unit", false);
+test("range(0, 5)", "[0, 1, 2, 3, 4, 5]");
+test("range(-3, 3)", "[-3, -2, -1, 0, 1, 2, 3]");
+test("range(3, -1)", "[3, 2, 1, 0, -1]");
+test("range(1, 2, 0.5)", "[1, 1.5, 2]");
 test("f(x, x + 2, 0, 4)", "[2, 3, 4, 5, 6]");
 test("f(y, y * 4, -1, 1, 0.25)", "[-4, -3, -2, -1, 0, 1, 2, 3, 4]");
 test("f(x, -x, -3, 3)", "[3, 2, 1, 0, -1, -2, -3]");
@@ -179,5 +183,6 @@ test("1, ,2", "Invalid Expression");
 test("a==1", "Invalid Expression");
 test("4 + a", "Unknown Variable");
 test("notafunc(123, 456)", "Unknown Function");
+test("range(1, 1)", "Invalid Range Bounds");
 
 finish();

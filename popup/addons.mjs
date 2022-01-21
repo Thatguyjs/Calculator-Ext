@@ -217,6 +217,31 @@ const addons = {
 			return [new Token(Token.Number, result, { negative: false })];
 		},
 
+		range: (start, stop, step) => {
+			start = parse(start[0], Token.Number);
+			stop = parse(stop[0], Token.Number);
+			step = step ? parse(step[0], Token.Number) : 1;
+
+			if(start === stop) return new Err(Err.Other, "Invalid Range Bounds");
+
+			let nums = [];
+
+			if(start > stop) {
+				while(start >= stop) {
+					nums.push(new Token(Token.Number, start));
+					start -= step;
+				}
+			}
+			else {
+				while(start <= stop) {
+					nums.push(new Token(Token.Number, start));
+					start += step;
+				}
+			}
+
+			return [new Token(Token.List, nums, { negative: false })];
+		},
+
 		f: (var_name, equation, start, stop, step) => {
 			var_name = parse(var_name[0], Token.Name);
 			start = parse(start[0], Token.Number);

@@ -36,11 +36,17 @@ A calculator extension for Chrome
 - tan / atan
 - log (logarithm)
 - ln (natural logarithm)
+- isprime (returns 1 if a given number is prime, 0 if not)
+- gcd (returns the greatest common divisor of two numbers)
+- gcf (same as gcd)
 
 ### Macros
 - hex (convert a hexadecimal number to decimal)
 - oct (convert an octal number to decimal)
 - bin (convert a binary number to decimal)
+- convert (converts a value between units)
+- range (returns a list of values from start to stop)
+- f (runs an equation multiple times from a range of values)
 
 ### Expressions
 - Expressions can be separated by using commas (,) in the input field
