@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 Thatguyjs All Rights Reserved. */
+/* Copyright (c) 2022 Thatguyjs All Rights Reserved. */
 
 
 :root {
@@ -22,6 +22,10 @@
 	--eval-text: rgb(192, 192, 192);
 
 	--text-active: rgb(240, 240, 240);
+
+	--error-underline: #ef2040;
+	--error-message: #ff7080;
+	--error-popup-background: rgba(27, 31, 37, 0.6);
 }
 
 
@@ -44,6 +48,10 @@ body {
 	box-shadow: 0 0 1px 1px rgb(200, 200, 200);
 }
 
+
+#input-area {
+	position: relative;
+}
 
 #input {
 	margin: 6px;
@@ -158,6 +166,94 @@ body {
 	content: "=";
 	font-size: 16px;
 	color: var(--history-equals);
+}
+
+
+/* Full-text hover version
+#error-display {
+	position: absolute;
+	left: 6px;
+	top: 6px;
+
+	padding: 5px 8px 0 0;
+
+	width: calc(100% - 20px);
+	height: 28px;
+
+	font-size: 15px;
+
+	text-align: right;
+	letter-spacing: 1.6px;
+
+	pointer-events: none;
+}
+*/
+
+#error-display {
+	position: absolute;
+	left: 6px;
+	top: 29px;
+
+	padding: 0 8px 0 0;
+
+	width: calc(100% - 20px);
+	height: 9px;
+
+	font-size: 15px;
+
+	text-align: right;
+	letter-spacing: 1.6px;
+
+	pointer-events: none;
+}
+
+#error-display > div {
+	position: relative;
+	display: inline-block;
+}
+
+#error-display div.error-section {
+	/* For full-text hovering method
+	text-decoration: underline;
+	text-decoration-color: var(--error-underline);
+	text-underline-offset: 2px;
+	*/
+
+	height: 14px;
+	border-top: 1px solid var(--error-underline);
+
+	pointer-events: visible;
+}
+
+#error-display pre {
+	margin: 0;
+	visibility: hidden;
+
+	color: Transparent;
+
+	/* For full-text hovering method
+	spellcheck: none;
+	outline: none;
+	*/
+}
+
+
+#error-message-popup {
+	position: absolute;
+	pointer-events: none;
+
+	padding: 6px 8px;
+
+	background: var(--error-popup-background);
+	border-radius: 3px;
+	backdrop-filter: blur(5px);
+
+	z-index: 2;
+}
+
+#error-message {
+	color: var(--error-message);
+	font-size: 14px;
 }
 
 
