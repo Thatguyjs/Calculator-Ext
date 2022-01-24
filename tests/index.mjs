@@ -196,5 +196,7 @@ test("4 + a", "Error at 4: Unknown Variable", false);
 test("4+a", "Error at 2: Unknown Variable");
 test("notafunc(123, 456)", "Error from 0 to 7: Unknown Function");
 test("range(1, 1)", "Error: Invalid Range Bounds");
+test("2 * 3 +", "Error from 0 to 6: Invalid Operation", false);
+test("+ 2 * 3", "Error from 0 to 6: Invalid Operation", false);
 
 finish();
