@@ -1,6 +1,6 @@
 import { expect_eq, finish } from "./lib.mjs";
 
-import addons from "../popup/addons.mjs";
+import addons from "../popup/calc/addons.mjs";
 import Calculator from "../Calc-JS/src/include.mjs";
 
 
@@ -102,16 +102,16 @@ test("gcf(230, 590)", "10");
 test("hex(ff)", "255");
 test("hex(1fc8)", "8136");
 test("hex(0x1fc8)", "8136");
-test("hex(fg)", "Error: Invalid Hex String");
+test("hex(fg)", "Error from 4 to 5: Invalid Hex String");
 test("oct(173)", "123");
 test("oct(17710)", "8136");
 test("oct(0o17710)", "8136");
-test("oct(79)", "Error: Invalid Octal String");
+test("oct(79)", "Error from 4 to 5: Invalid Octal String");
 test("bin(10)", "2");
 test("bin(111)", "7");
 test("bin(1111111001000)", "8136");
 test("bin(0b1111111001000)", "8136");
-test("bin(2)", "Error: Invalid Binary String");
+test("bin(2)", "Error at 4: Invalid Binary String");
 test("convert(100 meters as feet)", "328.08399", false);
 test("convert(4.5 yd, mi)", "0.0025568133");
 test("convert(48 * 2 kg to lb)", "211.6437950272", false);
@@ -195,7 +195,7 @@ test("a==1", "Error from 1 to 2: Invalid Expression");
 test("4 + a", "Error at 4: Unknown Variable", false);
 test("4+a", "Error at 2: Unknown Variable");
 test("notafunc(123, 456)", "Error from 0 to 7: Unknown Function");
-test("range(1, 1)", "Error: Invalid Range Bounds");
+test("range(1, 1)", "Error from 6 to 9: Invalid Range Bounds", false);
 test("2 * 3 +", "Error from 0 to 6: Invalid Operation", false);
 test("+ 2 * 3", "Error from 0 to 6: Invalid Operation", false);
 

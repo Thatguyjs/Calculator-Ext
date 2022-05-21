@@ -15,7 +15,7 @@ export default async function() {
 
 			await chrome.storage.local.set(init);
 
-			console.log("Initialized storage entries:", init);
+			console.info("Initialized storage entries:", init);
 			res();
 		});
 	});

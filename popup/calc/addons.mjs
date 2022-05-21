@@ -1,10 +1,14 @@
-// Copyright (c) 2021 Thatguyjs All Rights Reserved.
+// Copyright (c) 2022 Thatguyjs All Rights Reserved.
 // Constants and functions for the calculator
 
 import Converter from "./converter.mjs";
-import Buttons from "../buttons.mjs";
+import Calculator, { Token, Err } from "../../Calc-JS/src/include.mjs";
 
-import Calculator, { Token, Err } from "/Calc-JS/src/include.mjs";
+// Only load the module for browsers
+let Buttons = { get_angle_mode: () => { return "Rad"; } };
+
+if(typeof document !== 'undefined')
+	Buttons = (await import("../buttons.mjs")).default;
 
 
 
@@ -174,21 +178,36 @@ const addons = {
 		hex: (tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
-			if(isNaN(res)) return new Err(Err.Other, "Invalid Hex String");
+
+			if(isNaN(res))
+				return new Err(Err.Other, "Invalid Hex String", {
+					start: tokens[0].modifier.start,
+					end: tokens[tokens.length - 1].modifier.end
+				});
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		oct: (tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
-			if(isNaN(res)) return new Err(Err.Other, "Invalid Octal String");
+
+			if(isNaN(res))
+				return new Err(Err.Other, "Invalid Octal String", {
+					start: tokens[0].modifier.start,
+					end: tokens[tokens.length - 1].modifier.end
+				});
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		bin: (tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
-			if(isNaN(res)) return new Err(Err.Other, "Invalid Binary String");
+
+			if(isNaN(res))
+				return new Err(Err.Other, "Invalid Binary String", {
+					start: tokens[0].modifier.start,
+					end: tokens[tokens.length - 1].modifier.end
+				});
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
@@ -216,23 +235,29 @@ const addons = {
 		},
 
 		range: (start, stop, step) => {
-			start = parse(start[0], Token.Number);
-			stop = parse(stop[0], Token.Number);
-			step = step ? parse(step[0], Token.Number) : 1;
+			let start_val = parse(start[0], Token.Number);
+			let stop_val = parse(stop[0], Token.Number);
+			let step_val = step ? parse(step[0], Token.Number) : 1;
 
-			if(start === stop) return new Err(Err.Other, "Invalid Range Bounds");
+			if(start_val === stop_val)
+				return new Err(Err.Other, "Invalid Range Bounds", {
+					start: start[0].modifier.start,
+					end: step ? step[0].modifier.end : stop[0].modifier.end
+				});
 
 			let nums = [];
 
-			if(start > stop) {
-				const temp = start;
-				start = stop;
-				stop = temp;
+			if(start_val > stop_val) {
+				while(start_val >= stop_val) {
+					nums.push(new Token(Token.Number, start_val));
+					start_val -= step_val;
+				}
 			}
-
-			while(start <= stop) {
-				nums.push(new Token(Token.Number, start));
-				start += step;
+			else {
+				while(start_val <= stop_val) {
+					nums.push(new Token(Token.Number, start_val));
+					start_val += step_val;
+				}
 			}
 
 			return [new Token(Token.List, nums, { negative: false })];
@@ -280,8 +305,7 @@ const addons = {
 
 addons.functions.gcf = addons.functions.gcd;
 
-for(let f in addons.functions) {
+for(let f in addons.functions)
 	addons.functions[f] = tk_wrap(addons.functions[f]);
-}
 
 export default addons;
