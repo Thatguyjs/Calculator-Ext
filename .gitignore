@@ -1,5 +1,6 @@
-# Old file versions
+# Old file / folder versions
 *_old*
+old/
 
 # Node / npm stuff
 /node_modules
@@ -10,3 +11,6 @@
 
 # Promo images
 /promo
+
+# Other files
+/idea.md

@@ -1,115 +1,148 @@
-// Copyright (c) 2021 Thatguyjs All Rights Reserved.
+// Button / Key handling
 
-import CalcHistory from "./history.mjs";
+import { el, els_arr } from "./common/element.mjs";
+import Input from "./input.mjs";
+
+import ErrorDisplay from "./calc/errors.mjs";
 
 
 const Buttons = {
+	equals_btn: el('#button-equals'),
+	angle_mode_btn: el('#angle-mode'),
+	buttons: {
+		modifiers: els_arr('.modifier'),
+		operators: els_arr('.operator'),
+		functions: els_arr('.function'),
+		constants: els_arr('.constant'),
+		numbers: els_arr('.number')
+	},
 
-	// List of calculator buttons
-	buttons: [
-		...document.getElementsByClassName('number'),
-		...document.getElementsByClassName('operator'),
-		...document.getElementsByClassName('function')
-	],
+	_eval_cb: null,
 
 
-	// Change the angle mode
-	setAngleMode: function(mode) {
-		let otherMode = mode === 'degrees' ? 'radians' : 'degrees';
+	init() {
+		this.equals_btn.addEventListener('click', () => {
+			if(this._eval_cb) this._eval_cb(Input.value);
+		});
 
-		if(mode === 'degrees' || mode === 'radians') {
-			document.querySelector('.rotate-' + mode).classList.add('selected');
-			document.querySelector('.rotate-' + otherMode).classList.remove('selected');
+		window.addEventListener('keydown', ev => {
+			if(ev.code === 'Enter' && this._eval_cb)
+				this._eval_cb(Input.value);
+			else if(ev.code === 'Backspace' && ev.shiftKey)
+				Input.value = "";
+		});
 
-			document.querySelector('.rotate-type').setAttribute('data-active', mode);
 
-			CalcHistory.storeAngleMode(mode);
-		}
-		else if(mode === 'toggle') {
-			Buttons.setAngleMode(Buttons.getAngleMode() === 'degrees' ? 'radians' : 'degrees');
-		}
+		// The 'mousedown' event feels more responsive than 'click'
+
+		for(let btn of this.buttons.modifiers)
+			btn.addEventListener('mousedown', this._click_modifier.bind(this, btn));
+
+		for(let btn of this.buttons.operators)
+			btn.addEventListener('mousedown', this._click_operator.bind(this, btn));
+
+		for(let btn of this.buttons.functions)
+			btn.addEventListener('mousedown', this._click_function.bind(this, btn));
+
+		for(let btn of this.buttons.constants)
+			btn.addEventListener('mousedown', this._click_constant.bind(this, btn));
+
+		for(let btn of this.buttons.numbers)
+			btn.addEventListener('mousedown', this._click_number.bind(this, btn));
 	},
 
 
-	// Get the angle mode
-	getAngleMode: function() {
-		return document.querySelector('.rotate-type').getAttribute('data-active');
+	// Only allow left clicks
+	_can_click(ev) {
+		if(ev.button !== 0) {
+			ev.preventDefault();
+			return false;
+		}
+
+		// Clear any errors
+		if(ErrorDisplay.has_errors)
+			ErrorDisplay.clear_display();
+
+		return true;
 	},
 
+	_click_modifier(button, ev) {
+		if(!this._can_click(ev)) return;
 
-	// Handle modifier button actions
-	modifier: function(button) {
-		switch(button.getAttribute('name')) {
+		if(button.id === "angle-mode") {
+			button.setAttribute('data-mode', button.getAttribute('data-mode') === "Deg" ? "Rad" : "Deg");
+		}
+		else if(button.innerText === "Inv") {
+			button.setAttribute('data-active', button.getAttribute('data-active') === "false" ? "true" : "false");
 
-			case 'angle':
-				Buttons.setAngleMode('toggle');
-				break;
+			for(let c in this.buttons) {
+				for(let btn of this.buttons[c]) {
+					const inverse = btn.getAttribute('data-inverse');
+					const inverse_name = btn.getAttribute('data-inverse-name');
+					if(!inverse) continue;
 
-			case 'invert':
-				button.classList.toggle('active');
+					btn.setAttribute('data-inverse', btn.innerText);
+					btn.innerText = inverse;
 
-				for(let b in Buttons.buttons) {
-					let btn = Buttons.buttons[b];
-					let attr = "";
+					let has_name = false;
 
-					if(attr = btn.getAttribute('data-inverse')) {
-						btn.setAttribute('data-inverse', btn.innerText);
-						btn.innerText = attr;
+					if(btn.name.length > 0) {
+						btn.setAttribute('data-inverse-name', btn.name);
+						btn.name = "";
+						has_name = true;
+					}
+
+					if(inverse_name) {
+						btn.name = inverse_name;
+
+						if(!has_name)
+							btn.removeAttribute('data-inverse-name');
 					}
 				}
-				break;
-
-			case 'back':
-				input.value = input.value.slice(0, -1);
-				break;
-
-			case '!':
-				input.value += '!';
-				break;
-
-			case 'exp':
-				input.value += 'E';
-				break;
-
-			case 'pi':
-				input.value += 'pi';
-				break;
-
-			case 'e':
-				input.value += 'e';
-				break;
-
-			case 'ans':
-				input.value += CalcHistory.last.result;
-				break;
-
+			}
 		}
+		else if(button.innerText === "CE") {
+			Input.value = Input.value.slice(0, -1);
+		}
+		else if(button.innerText === "Ans") {
+			console.warn("TODO: 'Ans' button implementation");
+		}
+	},
 
-		input.dispatchEvent(new Event('input'));
+	_click_operator(button, ev) {
+		if(!this._can_click(ev)) return;
+
+		Input.append(button.name || button.innerText);
+	},
+
+	_click_function(button, ev) {
+		if(!this._can_click(ev)) return;
+
+		Input.append((button.name || button.innerText) + '(');
+	},
+
+	_click_constant(button, ev) {
+		if(!this._can_click(ev)) return;
+
+		Input.append(button.name);
+	},
+
+	_click_number(button, ev) {
+		if(!this._can_click(ev)) return;
+
+		Input.append(button.innerText);
+	},
+
+
+	get_angle_mode(fallback="Rad") {
+		return this.angle_mode_btn?.getAttribute('data-mode') ?? fallback;
+	},
+
+	on_eval(callback) {
+		this._eval_cb = callback;
 	}
-
 };
 
 
-for(let b in Buttons.buttons) {
-	let btn = Buttons.buttons[b];
-
-	if(btn.classList.contains('modifier')) {
-		btn.addEventListener('click', Buttons.modifier.bind(Buttons.modifier, btn));
-	}
-	else {
-		btn.addEventListener('click', () => {
-			if(btn.classList.contains('number') || btn.classList.contains('operator')) {
-				input.value += btn.innerText;
-			}
-			else {
-				input.value += btn.innerText + '(';
-			}
-
-			input.dispatchEvent(new Event('input'));
-		});
-	}
-}
-
-
+Buttons.init();
 export default Buttons;

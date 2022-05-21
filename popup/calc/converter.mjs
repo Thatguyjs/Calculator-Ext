@@ -1,5 +1,5 @@
 // Copyright (c) 2021 Thatguyjs All Rights Reserved.
-// Convert many different types
+// A simple unit conversion utility
 
 
 const Converter = {

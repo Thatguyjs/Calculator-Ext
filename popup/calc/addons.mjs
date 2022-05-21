@@ -1,15 +1,11 @@
 // Copyright (c) 2021 Thatguyjs All Rights Reserved.
 // Constants and functions for the calculator
 
-import Calculator, { Token, Err } from "../Calc-JS/src/include.mjs";
-import Converter from "./convert.mjs";
+import Converter from "./converter.mjs";
+import Buttons from "../buttons.mjs";
 
-let Buttons = null;
+import Calculator, { Token, Err } from "/Calc-JS/src/include.mjs";
 
-if(typeof window !== 'undefined')
-	Buttons = (await import("./buttons.mjs")).default;
-else
-	Buttons = { getAngleMode: () => { return 'radians'; } };
 
 
 // Allow functions to take token input
@@ -115,29 +111,29 @@ const addons = {
 		min: (...args) => Math.min.apply(Math, args),
 
 		sin: (value) => {
-			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			if(Buttons.get_angle_mode() === 'Deg') value *= Math.PI / 180;
 			return Math.sin(value);
 		},
 		asin: (value) => {
-			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.asin(value) * mult;
 		},
 
 		cos: (value) => {
-			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			if(Buttons.get_angle_mode() === 'Deg') value *= Math.PI / 180;
 			return Math.cos(value);
 		},
 		acos: (value) => {
-			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.acos(value) * mult;
 		},
 
 		tan: (value) => {
-			if(Buttons.getAngleMode() === 'degrees') value *= Math.PI / 180;
+			if(Buttons.get_angle_mode() === 'Deg') value *= Math.PI / 180;
 			return Math.tan(value);
 		},
 		atan: (value) => {
-			let mult = Buttons.getAngleMode() === 'degrees' ? 180 / Math.PI : 1;
+			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.atan(value) * mult;
 		},
 
@@ -176,22 +172,22 @@ const addons = {
 
 	macros: {
 		hex: (tokens) => {
-			let tk_string = join_tokens(tokens);
-			let res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
+			const tk_string = join_tokens(tokens);
+			const res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Hex String");
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		oct: (tokens) => {
-			let tk_string = join_tokens(tokens);
-			let res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
+			const tk_string = join_tokens(tokens);
+			const res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Octal String");
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 		bin: (tokens) => {
-			let tk_string = join_tokens(tokens);
-			let res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
+			const tk_string = join_tokens(tokens);
+			const res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
 			if(isNaN(res)) return new Err(Err.Other, "Invalid Binary String");
 
 			return [new Token(Token.Number, res, { negative: false })];
@@ -212,9 +208,11 @@ const addons = {
 			if(!Converter.has_type(from_type) || !Converter.has_type(to_type))
 				return new Err(Err.Other, "Unknown Unit");
 
-			let result = Converter.convert(from_val, from_type, to_type);
-
-			return [new Token(Token.Number, result, { negative: false })];
+			return [new Token(
+				Token.Number,
+				Converter.convert(from_val, from_type, to_type),
+				{ negative: false }
+			)];
 		},
 
 		range: (start, stop, step) => {
@@ -227,16 +225,14 @@ const addons = {
 			let nums = [];
 
 			if(start > stop) {
-				while(start >= stop) {
-					nums.push(new Token(Token.Number, start));
-					start -= step;
-				}
+				const temp = start;
+				start = stop;
+				stop = temp;
 			}
-			else {
-				while(start <= stop) {
-					nums.push(new Token(Token.Number, start));
-					start += step;
-				}
+
+			while(start <= stop) {
+				nums.push(new Token(Token.Number, start));
+				start += step;
 			}
 
 			return [new Token(Token.List, nums, { negative: false })];

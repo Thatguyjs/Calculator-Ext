@@ -1,0 +1,14 @@
+body {
+	margin: 0 5px 6px 5px;
+	padding: 0;
+
+	width: 465px;
+}
+
+.hidden {
+	display: none;
+}
+
+button {
+	cursor: pointer;
+}

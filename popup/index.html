@@ -1,86 +1,74 @@
 <!DOCTYPE html>
-<!-- Copyright (c) 2022 Thatguyjs All Rights Reserved. -->
-<html lang="en" dir="ltr">
+<html lang="en">
 	<head>
-		<meta charset="utf-8">
-		<title>Calculator</title>
+		<meta charset="UTF-8">
 
+		<link rel="stylesheet" href="common/common.css">
+		<link rel="stylesheet" href="theme.css">
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
+		<div id="icons" class="hidden"></div>
+		<script type="module" src="common/icons.mjs"></script>
+
 		<div id="input-area">
-			<input id="input" spellcheck="false">
+			<input id="input" type="text" spellcheck="false">
 
-			<div id="history-dropdown">
-				<svg id="history-toggle" viewBox="0 0 24 24">
-					<path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0
-					-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94
-					-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9
-					s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
-				</svg>
+			<div id="history">
+				<button id="history-button">
+					<svg><use href="#icon-history"/></svg>
+				</button>
 
-				<div id="history-entries" class="hidden"></div>
+				<div id="history-items" class="hidden"></div>
 			</div>
 
-			<div id="error-display"></div>
-			<div id="error-message-popup" class="hidden">
-				<span id="error-message"></span>
-			</div>
+			<div id="error-input" data-active="false"></div>
+			<div id="error-message" class="hidden"><span></span></div>
 		</div>
 
-		<table id="buttons">
-			<tr>
-				<td class="function modifier" name="angle" colspan="2">
-					<div class="rotate-type" data-active="degrees">
-						<div class="rotate-radians">Rad</div>
-						<div class="rotate-bar"></div>
-						<div class="rotate-degrees selected">Deg</div>
-					</div>
-				</td>
-				<td class="function modifier" name="invert">Inv</td>
-				<td class="operator" data-inverse="%">^</td>
-				<td class="operator">(</td>
-				<td class="operator">)</td>
-				<td class="function modifier" name="back">Del</td>
-			</tr>
-			<tr>
-				<td class="function" data-inverse="asin">sin</td>
-				<td class="function" data-inverse="acos">cos</td>
-				<td class="function" data-inverse="atan">tan</td>
-				<td class="operator">*</td>
-				<td class="number">7</td>
-				<td class="number">8</td>
-				<td class="number">9</td>
-			</tr>
-			<tr>
-				<td class="function">log</td>
-				<td class="function">ln</td>
-				<td class="function modifier" name="!">x!</td>
-				<td class="operator">/</td>
-				<td class="number">4</td>
-				<td class="number">5</td>
-				<td class="number">6</td>
-			</tr>
-			<tr>
-				<td class="function">sqrt</td>
-				<td class="function">cbrt</td>
-				<td class="function modifier" name="exp">Exp</td>
-				<td class="operator">-</td>
-				<td class="number">1</td>
-				<td class="number">2</td>
-				<td class="number">3</td>
-			</tr>
-			<tr>
-				<td class="function modifier" name="pi">π</td>
-				<td class="function modifier" name="e">e</td>
-				<td class="function modifier" name="ans">Ans</td>
-				<td class="operator">+</td>
-				<td class="number">0</td>
-				<td class="number">.</td>
-				<td class="eval" id="equals">=</td>
-			</tr>
-		</table>
+		<div id="button-area">
+			<button class="modifier" id="angle-mode" data-mode="Deg">
+				<span>Rad</span><div></div><span>Deg</span>
+			</button>
+			<button class="modifier" name="inv" data-active="false">Inv</button>
+			<button class="operator" data-inverse="%">^</button>
+			<button class="operator">(</button>
+			<button class="operator">)</button>
+			<button class="modifier">CE</button>
 
-		<script src="load.mjs" type="module"></script>
+			<button class="function" data-inverse="asin">sin</button>
+			<button class="function" data-inverse="acos">cos</button>
+			<button class="function" data-inverse="atan">tan</button>
+			<button class="operator" data-inverse="x!" data-inverse-name="!">*</button>
+			<button class="number">7</button>
+			<button class="number">8</button>
+			<button class="number">9</button>
+
+			<button class="function">log</button>
+			<button class="function">ln</button>
+			<button class="function" name="f">ƒ</button>
+			<button class="operator" data-inverse="E">/</button>
+			<button class="number">4</button>
+			<button class="number">5</button>
+			<button class="number">6</button>
+
+			<button class="function">sqrt</button>
+			<button class="function">cbrt</button>
+			<button class="function" name="root">√</button>
+			<button class="operator">-</button>
+			<button class="number">1</button>
+			<button class="number">2</button>
+			<button class="number">3</button>
+
+			<button class="constant" name="pi">&pi;</button>
+			<button class="constant" name="e"><em>e</em></button>
+			<button class="modifier">Ans</button>
+			<button class="operator">+</button>
+			<button class="number">0</button>
+			<button class="number">.</button>
+			<button id="button-equals">=</button>
+		</div>
+
+		<script type="module" src="./main.mjs"></script>
 	</body>
 </html>
