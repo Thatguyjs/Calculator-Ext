@@ -11,7 +11,6 @@ if(typeof document !== 'undefined')
 	Buttons = (await import("../buttons.mjs")).default;
 
 
-
 // Allow functions to take token input
 function tk_wrap(call) {
 	return function(...tokens) {
@@ -27,6 +26,22 @@ function tk_wrap(call) {
 		}
 
 		return [new Token(Token.Number, call(...nums))];
+	}
+}
+
+// Set the first parameter of a macro to the location spanning all args
+function macro_wrap(call) {
+	return function(...groups) {
+		if(groups.length === 0)
+			return call({ start: null, end: null }, ...groups);
+		else {
+			const last_grp = groups[groups.length - 1];
+
+			return call({
+				start: groups[0][0].modifier.start,
+				end: last_grp[last_grp.length - 1].modifier.end
+			}, ...groups);
+		}
 	}
 }
 
@@ -175,44 +190,35 @@ const addons = {
 
 
 	macros: {
-		hex: (tokens) => {
+		hex: (location, tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Hex String", {
-					start: tokens[0].modifier.start,
-					end: tokens[tokens.length - 1].modifier.end
-				});
+				return new Err(Err.Other, "Invalid Hex String", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
-		oct: (tokens) => {
+		oct: (location, tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Octal String", {
-					start: tokens[0].modifier.start,
-					end: tokens[tokens.length - 1].modifier.end
-				});
+				return new Err(Err.Other, "Invalid Octal String", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
-		bin: (tokens) => {
+		bin: (location, tokens) => {
 			const tk_string = join_tokens(tokens);
 			const res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Binary String", {
-					start: tokens[0].modifier.start,
-					end: tokens[tokens.length - 1].modifier.end
-				});
+				return new Err(Err.Other, "Invalid Binary String", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 
-		convert: (from, to) => {
+		convert: (location, from, to) => {
 			if(!from) return new Err(Err.Other, "Missing Parameters");
 			else if(from.length > 3 && ['as', 'to', 'in'].includes(from[from.length - 2].data)) {
 				to = from.slice(-1);
@@ -224,8 +230,17 @@ const addons = {
 			const from_type = from[from.length - 1].data;
 			const to_type = to[0].data;
 
-			if(!Converter.has_type(from_type) || !Converter.has_type(to_type))
-				return new Err(Err.Other, "Unknown Unit");
+			if(!Converter.has_type(from_type))
+				return new Err(Err.Other, "Unknown Unit", {
+					start: from[from.length - 1].modifier.start,
+					end: from[from.length - 1].modifier.end
+				});
+
+			if(!Converter.has_type(to_type))
+				return new Err(Err.Other, "Unknown Unit", {
+					start: to[to.length - 1].modifier.start,
+					end: to[to.length - 1].modifier.end
+				});
 
 			return [new Token(
 				Token.Number,
@@ -234,14 +249,14 @@ const addons = {
 			)];
 		},
 
-		range: (start, stop, step) => {
+		range: (location, start, stop, step) => {
 			let start_val = parse(start[0], Token.Number);
 			let stop_val = parse(stop[0], Token.Number);
 			let step_val = step ? parse(step[0], Token.Number) : 1;
 
 			if(start_val === stop_val)
 				return new Err(Err.Other, "Invalid Range Bounds", {
-					start: start[0].modifier.start,
+					start: location.start,
 					end: step ? step[0].modifier.end : stop[0].modifier.end
 				});
 
@@ -263,7 +278,7 @@ const addons = {
 			return [new Token(Token.List, nums, { negative: false })];
 		},
 
-		f: (var_name, equation, start, stop, step) => {
+		f: (location, var_name, equation, start, stop, step) => {
 			var_name = parse(var_name[0], Token.Name);
 			start = parse(start[0], Token.Number);
 			stop = parse(stop[0], Token.Number);
@@ -272,7 +287,7 @@ const addons = {
 			else step = parse(step[0], Token.Number);
 
 			if(Math.abs(start - stop) / step > 100)
-				return new Err(Err.Other, "Step size too small");
+				return new Err(Err.Other, "Step size too small", location);
 
 			if(start > stop && step > 0)
 				step = -step;
@@ -307,5 +322,8 @@ addons.functions.gcf = addons.functions.gcd;
 
 for(let f in addons.functions)
 	addons.functions[f] = tk_wrap(addons.functions[f]);
+
+for(let m in addons.macros)
+	addons.macros[m] = macro_wrap(addons.macros[m]);
 
 export default addons;

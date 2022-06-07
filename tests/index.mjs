@@ -120,9 +120,10 @@ test("convert(360 / 2 deg as rad)", "3.1415926536", false);
 test("convert(1 rad, deg)", "57.2957795131");
 test("convert(600 secs to days)", "0.0069444444", false);
 test("convert(1 - 0.6 yr, mins)", "210239.695152442");
-test("convert()", "Error: Missing Parameters");
-test("convert(2 meters)", "Error: Missing Parameters");
-test("convert(25 programmers to people)", "Error: Unknown Unit", false);
+test("convert()", "Error from 0 to 8: Missing Parameters");
+test("convert(2 meters)", "Error from 0 to 16: Missing Parameters", false);
+test("convert(25 programmers to people)", "Error from 11 to 21: Unknown Unit", false);
+test("convert(25 kg to feathers)", "Error from 17 to 24: Unknown Unit", false);
 test("range(0, 5)", "[0, 1, 2, 3, 4, 5]");
 test("range(-3, 3)", "[-3, -2, -1, 0, 1, 2, 3]");
 test("range(3, -1)", "[3, 2, 1, 0, -1]");
@@ -130,6 +131,7 @@ test("range(1, 2, 0.5)", "[1, 1.5, 2]");
 test("f(x, x + 2, 0, 4)", "[2, 3, 4, 5, 6]");
 test("f(y, y * 4, -1, 1, 0.25)", "[-4, -3, -2, -1, 0, 1, 2, 3, 4]");
 test("f(x, -x, -3, 3)", "[3, 2, 1, 0, -1, -2, -3]");
+test("f(x, x / 2, 1, 100, 0.1)", "Error from 2 to 22: Step size too small", false);
 
 // Tests from Calculator-Ext
 test("1", "1");
