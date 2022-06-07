@@ -195,7 +195,7 @@ const addons = {
 			const res = Number(`${tk_string.startsWith('0x') ? '' : '0x'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Hex String", location);
+				return new Err(Err.Other, "Invalid Hex Value", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
@@ -204,7 +204,7 @@ const addons = {
 			const res = Number(`${tk_string.startsWith('0o') ? '' : '0o'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Octal String", location);
+				return new Err(Err.Other, "Invalid Octal Value", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
@@ -213,18 +213,18 @@ const addons = {
 			const res = Number(`${tk_string.startsWith('0b') ? '' : '0b'}${tk_string}`);
 
 			if(isNaN(res))
-				return new Err(Err.Other, "Invalid Binary String", location);
+				return new Err(Err.Other, "Invalid Binary Value", location);
 
 			return [new Token(Token.Number, res, { negative: false })];
 		},
 
 		convert: (location, from, to) => {
-			if(!from) return new Err(Err.Other, "Missing Parameters");
+			if(!from) return new Err(Err.Other, "Missing Parameters", location);
 			else if(from.length > 3 && ['as', 'to', 'in'].includes(from[from.length - 2].data)) {
 				to = from.slice(-1);
 				from = from.slice(0, -2);
 			}
-			else if(!to) return new Err(Err.Other, "Missing Parameters");
+			else if(!to) return new Err(Err.Other, "Missing Parameters", location);
 
 			const from_val = Calculator.eval_tokens(from.slice(0, -1))[0].value; // TODO: Check for errors
 			const from_type = from[from.length - 1].data;
@@ -250,6 +250,9 @@ const addons = {
 		},
 
 		range: (location, start, stop, step) => {
+			if(!start || !stop)
+				return new Err(Err.Other, "Missing Parameters", location);
+
 			let start_val = parse(start[0], Token.Number);
 			let stop_val = parse(stop[0], Token.Number);
 			let step_val = step ? parse(step[0], Token.Number) : 1;
@@ -279,12 +282,13 @@ const addons = {
 		},
 
 		f: (location, var_name, equation, start, stop, step) => {
+			if(!var_name || !start || !stop)
+				return new Err(Err.Other, "Missing Parameters", location);
+
 			var_name = parse(var_name[0], Token.Name);
 			start = parse(start[0], Token.Number);
 			stop = parse(stop[0], Token.Number);
-
-			if(!step) step = 1;
-			else step = parse(step[0], Token.Number);
+			step = step ? parse(step[0], Token.Number) : 1;
 
 			if(Math.abs(start - stop) / step > 100)
 				return new Err(Err.Other, "Step size too small", location);
