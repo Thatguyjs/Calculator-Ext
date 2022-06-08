@@ -17,6 +17,7 @@ const Buttons = {
 		numbers: els_arr('.number')
 	},
 
+	_angle_mode_cb: null,
 	_eval_cb: null,
 
 
@@ -71,6 +72,9 @@ const Buttons = {
 
 		if(button.id === "angle-mode") {
 			button.setAttribute('data-mode', button.getAttribute('data-mode') === "Deg" ? "Rad" : "Deg");
+
+			if(this._angle_mode_cb)
+				this._angle_mode_cb(this.get_angle_mode());
 		}
 		else if(button.innerText === "Inv") {
 			button.setAttribute('data-active', button.getAttribute('data-active') === "false" ? "true" : "false");
@@ -136,6 +140,10 @@ const Buttons = {
 
 	get_angle_mode(fallback="Rad") {
 		return this.angle_mode_btn?.getAttribute('data-mode') ?? fallback;
+	},
+
+	on_angle_mode_change(callback) {
+		this._angle_mode_cb = callback;
 	},
 
 	on_eval(callback) {

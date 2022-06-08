@@ -1,5 +1,6 @@
 // Manages application state (input, button state)
 
+import Buttons from "./buttons.mjs";
 import Input from "./input.mjs";
 
 
@@ -10,6 +11,10 @@ const State = {
 
 
 	init() {
+		Buttons.on_angle_mode_change(angle => {
+			this.storage.local.set({ angle });
+		});
+
 		Input.on('update', active => {
 			this.storage.local.set({ active });
 		});
