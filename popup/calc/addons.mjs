@@ -25,7 +25,19 @@ function tk_wrap(call) {
 			nums.push(tokens[t].data);
 		}
 
-		return [new Token(Token.Number, call(...nums))];
+		const result = call(...nums);
+
+		if(isNaN(result)) {
+			const last_tk = tokens[tokens.length - 1];
+
+			const location = {
+				start: tokens[0]?.modifier?.start ?? null,
+				end: last_tk?.modifier?.end ?? null
+			};
+
+			return new Err(Err.Other, "Invalid Value", location);
+		}
+		else return new Token(Token.Number, result);
 	}
 }
 

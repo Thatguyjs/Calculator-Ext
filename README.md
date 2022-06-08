@@ -68,7 +68,7 @@ Convert `value` from octal (base 8) to decimal (base 10)
 #### bin(value)
 Convert `value` from binary (base 2) to decimal (base 10)
 #### convert(value from_unit, to_unit)
-#### convert(value from_unit [as | to | in] to_unit)
+#### convert(value from_unit ["as" | "to" | "in"] to_unit)
 Converts `value` from `from_unit` to `to_unit`
 #### range(start, stop[, step])
 Creates a list that spans from `start` to `stop`, with an optional `step` size (default: `1`)
