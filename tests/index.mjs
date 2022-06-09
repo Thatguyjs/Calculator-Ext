@@ -185,6 +185,7 @@ test("round(0.49)", "0");
 test("round(0.5)", "1");
 test("floor(4.99)", "4");
 test("ceil(2.01)", "3");
+test("trunc(pi, 2)", "3.14");
 test("sum(2 + 3 / 2, 4 * 5)", "23.5");
 
 // Error messages

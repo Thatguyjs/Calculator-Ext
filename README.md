@@ -43,6 +43,8 @@ Round `x` down to the nearest integer
 Round `x` to the nearest integer (`.5` is rounded up)
 #### ceil(x)
 Round `x` up to the nearest integer
+#### trunc(x[, decimals])
+Truncate `x` to the amount of decimal places determined by `decimals` (default: `0`)
 #### sin(x) / asin(x)
 Sine and Arcsine (also written as <code>sin<sup>-1</sup>(x)</code>)
 #### cos(x) / acos(x)

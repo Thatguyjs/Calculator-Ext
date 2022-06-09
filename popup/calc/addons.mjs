@@ -138,6 +138,13 @@ const addons = {
 		round: Math.round,
 		ceil: Math.ceil,
 
+		trunc: (value, decimals) => {
+			if(typeof value === 'undefined') return NaN;
+
+			decimals ??= 0;
+			return +value.toFixed(decimals);
+		},
+
 		max: (...args) => Math.max.apply(Math, args),
 		min: (...args) => Math.min.apply(Math, args),
 
@@ -146,7 +153,7 @@ const addons = {
 			return Math.sin(value);
 		},
 		asin: (value) => {
-			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
+			const mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.asin(value) * mult;
 		},
 
@@ -155,7 +162,7 @@ const addons = {
 			return Math.cos(value);
 		},
 		acos: (value) => {
-			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
+			const mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.acos(value) * mult;
 		},
 
@@ -164,7 +171,7 @@ const addons = {
 			return Math.tan(value);
 		},
 		atan: (value) => {
-			let mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
+			const mult = Buttons.get_angle_mode() === 'Deg' ? 180 / Math.PI : 1;
 			return Math.atan(value) * mult;
 		},
 
