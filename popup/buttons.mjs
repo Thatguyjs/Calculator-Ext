@@ -4,6 +4,7 @@ import { el, els_arr } from "./common/element.mjs";
 import Input from "./input.mjs";
 
 import ErrorDisplay from "./calc/errors.mjs";
+import HistoryStorage from "./history/storage.mjs";
 
 
 const Buttons = {
@@ -67,7 +68,7 @@ const Buttons = {
 		return true;
 	},
 
-	_click_modifier(button, ev) {
+	async _click_modifier(button, ev) {
 		if(!this._can_click(ev)) return;
 
 		if(button.id === "angle-mode") {
@@ -109,7 +110,10 @@ const Buttons = {
 			Input.value = Input.value.slice(0, -1);
 		}
 		else if(button.innerText === "Ans") {
-			console.warn("TODO: 'Ans' button implementation");
+			const last = await HistoryStorage.last();
+			if(last.result.errors.length > 0) return; // Don't add the last entry if there were errors
+
+			Input.value += last.result.values.join(', ');
 		}
 	},
 
