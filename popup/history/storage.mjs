@@ -33,10 +33,28 @@ const HistoryStorage = {
 		});
 	},
 
+	async at(index) {
+		return new Promise(res => {
+			this.storage.local.get(['history'], items => {
+				res(items.history[index] ?? null);
+			});
+		});
+	},
+
 	async all() {
 		return new Promise(res => {
 			this.storage.local.get(['history'], items => {
 				res(items.history);
+			});
+		});
+	},
+
+
+	// Get the amount of history entries
+	async count() {
+		return new Promise(res => {
+			this.storage.local.get(['history'], items => {
+				res(items.history.length);
 			});
 		});
 	}
