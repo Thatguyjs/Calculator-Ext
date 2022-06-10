@@ -59,7 +59,7 @@ Logarithm base `e` of `x`
 Returns `1` if `x` is prime, and `0` if `x` is not prime
 #### gcd(num, den)
 #### gcf(num, den)
-Returns the greatest common denominator (factor) of two numbers. Returns `0` if either number is not an integer
+Returns the greatest common divisor (factor) of two numbers. Returns `0` if either number is not an integer
 
 ## Macros
 
