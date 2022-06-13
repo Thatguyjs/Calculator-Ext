@@ -60,6 +60,7 @@ body {
 
 #history-items {
 	width: 270px;
+	min-height: 30px;
 	max-height: 200px;
 
 	background: var(--g-history-bg);
