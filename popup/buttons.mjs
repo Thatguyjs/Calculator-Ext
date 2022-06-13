@@ -34,7 +34,6 @@ const Buttons = {
 				Input.value = "";
 		});
 
-
 		// The 'mousedown' event feels more responsive than 'click'
 
 		for(let btn of this.buttons.modifiers)

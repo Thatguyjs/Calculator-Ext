@@ -21,7 +21,10 @@ const CalcHistory = {
 		const last_entry = await HistoryStorage.last();
 		let is_duplicate = true;
 
-		if(input !== last_entry.input ||
+		if(last_entry === null) {
+			is_duplicate = false;
+		}
+		else if(input !== last_entry.input ||
 			result.values.length !== last_entry.result.values.length ||
 			result.errors.length !== last_entry.result.errors.length) {
 

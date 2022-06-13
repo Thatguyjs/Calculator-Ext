@@ -9,7 +9,7 @@ const HistoryStorage = {
 	// Only called when a new equation or result is calculated, so we don't have to check for duplicates here
 	push(input, values, errors) {
 		this.storage.local.get(['history'], items => {
-			items = items.history;
+			items = items.history ?? [];
 
 			items.unshift({
 				input,
@@ -28,6 +28,7 @@ const HistoryStorage = {
 	async last() {
 		return new Promise(res => {
 			this.storage.local.get(['history'], items => {
+				items.history ??= [];
 				res(items.history[0] ?? null);
 			});
 		});
@@ -36,6 +37,7 @@ const HistoryStorage = {
 	async at(index) {
 		return new Promise(res => {
 			this.storage.local.get(['history'], items => {
+				items.history ??= [];
 				res(items.history[index] ?? null);
 			});
 		});
@@ -44,7 +46,7 @@ const HistoryStorage = {
 	async all() {
 		return new Promise(res => {
 			this.storage.local.get(['history'], items => {
-				res(items.history);
+				res(items.history ?? []);
 			});
 		});
 	},
