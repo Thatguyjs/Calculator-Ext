@@ -1,51 +1,22 @@
-// Copyright (c) 2020 Thatguyjs All Rights Reserved.
+import { el } from "./common/element.mjs";
 
-import CalcHistory from "./history.mjs";
-import Calculator from "/calculate/calculate.mjs";
-
-
-const Main = {
-
-	// Initialize
-	init: async function() {
-		input.focus();
-
-		input.addEventListener('focusout', () => {
-			input.focus();
-		});
-
-		equals.addEventListener('click', () => {
-			this.calculate();
-		});
-
-		window.addEventListener('keydown', (event) => {
-			if(event.key === 'Enter') this.calculate();
-			else if(event.key === 'Backspace' && event.shiftKey) input.value = "";
-		});
-	},
+import Buttons from "./buttons.mjs";
+import Calc from "./calc/calc.mjs";
+import CalcHistory from "./history/history.mjs";
+import Input from "./input.mjs";
+import State from "./state.mjs";
 
 
-	// Evalulate an equation
-	calculate: function() {
-		if(!input.value.length) return;
-		Calculator.clearVariables();
+Input.init();
 
-		const results = Calculator.eval(input.value);
-		let resString = "";
+Calc.set_elements(el('#error-input'), el('#error-message'));
 
-		for(let r in results) {
-			if(!results[r].error) resString += results[r].value.toString();
-			else resString += Calculator.errorMessage(results[r].error);
-			resString += ', ';
-		}
+Buttons.on_eval(text => {
+	CalcHistory.handle_result(text, Calc.eval_and_display(text));
+});
 
-		resString = resString.slice(0, -2);
+CalcHistory.set_element(el('#history'));
 
-		CalcHistory.store(input.value, resString);
-		input.value = resString;
-	}
-
-};
-
-
-export default Main;
+State.init();
+State.set_elements(el('#angle-mode'));
+State.load_state();

@@ -1,7 +1,7 @@
 {
 	"name": "Calculator",
 	"description": "A scientific calculator",
-	"version": "2.6.26",
+	"version": "4.9.4",
 
 	"icons": {
 		"16": "icons/icon16.png",
@@ -15,12 +15,17 @@
 		"default_popup": "popup/index.html"
 	},
 
+	"background": {
+		"service_worker": "background/update.mjs",
+		"type": "module"
+	},
+
 	"permissions": [
 		"storage"
 	],
 
 	"offline_enabled": true,
-	"minimum_chrome_version": "85",
+	"minimum_chrome_version": "88",
 
 	"manifest_version": 3
 }

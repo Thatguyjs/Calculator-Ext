@@ -1,0 +1,58 @@
+/* CSS Theme Variables */
+
+:root {
+	--g-background: rgb(17, 21, 27);
+
+	/* Input Vars */
+	--g-input-radius: 3px;
+	--g-input-fg: #000;
+	--g-input-bg: #eee;
+
+	/* History Menu Vars */
+	--g-history-button-fg: #5f5f5f;
+	--g-history-button-bg: #0002;
+
+	--g-history-bg: rgba(27, 31, 37, 0.7);
+	--g-history-bg-blur: 5px;
+	--g-history-shadow: #000a;
+	--g-history-scrollbar-bg: #ffffff1a;
+	--g-history-scrollthumb-bg: #fff2;
+
+	--g-history-item-highlight: #fff1;
+	--g-history-item-ok: #aaa;
+	--g-history-item-error: #aaa;
+	--g-history-error-underline: #f44b;
+	--g-history-equals: rgb(75, 94, 144);
+
+	/* Input Error Vars */
+	--g-error-underline: #f00;
+	--g-error-highlight: #f002;
+	--g-error-message-fg: #f66;
+	--g-error-message-bg: rgba(17, 21, 27, 0.7);
+
+	/* Button Vars */
+	--g-button-radius: 3px;
+
+	--g-angle-mode-active: rgb(240, 240, 240);
+	--g-angle-mode-bar: #fff3;
+
+	--g-invert-active: rgb(240, 240, 240);
+
+	--g-btn-modifier-fg: rgb(182, 182, 182);
+	--g-btn-modifier-bg: rgb(62, 68, 75);
+
+	--g-btn-function-fg: rgb(182, 182, 182);
+	--g-btn-function-bg: rgb(62, 68, 75);
+
+	--g-btn-number-fg: rgb(165, 165, 165);
+	--g-btn-number-bg: rgb(32, 38, 45);
+
+	--g-btn-constant-fg: rgb(182, 182, 182);
+	--g-btn-constant-bg: rgb(62, 68, 75);
+
+	--g-btn-operator-fg: rgb(175, 175, 175);
+	--g-btn-operator-bg: rgb(46, 52, 59);
+
+	--g-btn-equals-fg: rgb(192, 192, 192);
+	--g-btn-equals-bg: rgb(25, 64, 104);
+}

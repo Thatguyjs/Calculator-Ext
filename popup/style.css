@@ -1,245 +1,309 @@
-/* Copyright (c) 2020 Thatguyjs All Rights Reserved. */
-
-
-:root {
-	/* --background: rgb(13, 17, 23); */
-	--background: rgb(17, 21, 27);
-
-	--history-background: rgba(27, 31, 37, 0.7);
-	--history-scrollbar: rgba(255, 255, 255, 0.2);
-	--history-equation: rgb(220, 220, 220);
-	--history-equals: rgb(35, 94, 164);
-	--history-result: rgb(210, 210, 210);
-
-	--num-bg: rgb(32, 38, 45);
-	--op-bg: rgb(46, 52, 59);
-	--fn-bg: rgb(62, 68, 75);
-	--eval-bg: rgb(25, 64, 104);
-
-	--num-text: rgb(165, 165, 165);
-	--op-text: rgb(175, 175, 175);
-	--fn-text: rgb(182, 182, 182);
-	--eval-text: rgb(192, 192, 192);
-
-	--text-active: rgb(240, 240, 240);
-}
-
-
 body {
-	margin: 0;
-
-	width: 460px;
-	height: 260px;
-
-	background: var(--background);
+	background: var(--g-background);
 }
 
 
-.hidden {
-	display: none;
+/* Input */
+
+#input-area {
+	display: inline;
+
+	background: #f001;
 }
-
-
-.active {
-	box-shadow: 0 0 1px 1px rgb(200, 200, 200);
-}
-
 
 #input {
-	margin: 6px;
-	margin-bottom: 0;
-	padding: 0 8px 0 0;
+	width: 444px;
+	margin: 6px 0 6px 1px;
+	padding: 0.5em 0.6em 0.4em 0.6em;
 
-	width: calc(100% - 20px);
-	height: 32px;
-
+	text-align: right;
 	font-size: 15px;
 	font-family: monospace;
-	text-align: right;
 	letter-spacing: 1.6px;
+	color: var(--g-input-fg);
 
-	border-radius: 4px;
+	background: var(--g-input-bg);
 	border: none;
+	border-radius: var(--g-input-radius);
 	outline: none;
 }
 
 
-#history-dropdown {
-	position: absolute;
-	left: 12px;
-	top: 9px;
+/* History menu */
 
+#history {
+	position: absolute;
+	top: 9px;
+	left: 12px;
+}
+
+#history-button {
+	padding: 2px;
 	width: 26px;
 	height: 26px;
 
+	fill: var(--g-history-button-fg);
+
+	background: Transparent;
 	border-radius: 3px;
-	transition: background 0.15s;
-
-	cursor: pointer;
-}
-#history-dropdown:hover {
-	background: rgb(220, 220, 220);
+	border: none;
 }
 
-#history-dropdown svg {
-	margin: 1px 0 0 1px;
-
-	width: 23px;
-	height: 23px;
-
-	fill: rgb(120, 120, 120);
+#history-button:hover {
+	background: var(--g-history-button-bg);
 }
 
+#history-button > svg {
+	width: 100%;
+	height: 100%;
+}
 
-#history-entries {
-	position: absolute;
-
-	width: 300px;
-	min-height: 40px;
+#history-items {
+	width: 270px;
+	min-height: 30px;
 	max-height: 200px;
 
-	font-family: monospace;
-
-	background: var(--history-background);
-	border-radius: 6px;
-	box-shadow: 0 2px 6px rgb(30, 30, 30);
-	backdrop-filter: blur(5px);
+	background: var(--g-history-bg);
+	backdrop-filter: blur(var(--g-history-bg-blur));
+	border-radius: 5px;
+	box-shadow: 0 0 8px var(--g-history-shadow);
 
 	overflow-y: scroll;
-	z-index: 1;
-
-	cursor: default;
-}
-#history-entries::-webkit-scrollbar {
-	width: 12px;
-}
-#history-entries::-webkit-scrollbar-thumb {
-	background: var(--history-scrollbar);
-	border-radius: 2px;
 }
 
-#history-entries > div {
-	position: relative;
-	display: flex;
-	flex-direction: row;
-
-	margin-bottom: 2px;
-
-	width: 100%;
-	height: 40px;
-}
-#history-entries > div:hover {
-	cursor: pointer;
+#history-items::-webkit-scrollbar {
+	width: 8px;
+	background-image: linear-gradient(var(--g-history-scrollbar-bg), Transparent);
 }
 
-#history-entries span {
-	margin: 0;
-	padding: 12px 0 0 6px;
-
-	width: calc(50% - 14px);
-
-	color: rgb(205, 205, 205);
-	font-size: 14px;
-
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-#history-entries span:hover {
-	background: rgba(255, 255, 255, 0.1);
+#history-items::-webkit-scrollbar-thumb {
+	background: var(--g-history-scrollthumb-bg);
+	border-radius: 1px;
 }
 
-#history-entries > div > div::before {
-	display: block;
-	padding: 10px 0 0 4px;
-
-	width: 12px;
-
-	content: "=";
-	font-size: 16px;
-	color: var(--history-equals);
-}
-
-
-#buttons {
-	width: 100%;
-	height: calc(100% - 38px);
-
-	border-spacing: 5px;
-}
-#buttons td {
-	padding: 0;
-
-	width: 14%;
-	height: calc(20% - 5px);
-
-	text-align: center;
-	font-family: arial;
-	font-size: 14px;
-
-	border-radius: 3px;
-
-	overflow: hidden;
+.history-item {
 	cursor: pointer;
 	user-select: none;
 }
-#buttons td:hover {
-	filter: brightness(1.15);
+
+.history-item > pre {
+	display: inline-block;
+
+	font-size: 14px;
 }
 
-.number {
-	background: var(--num-bg);
-	color: var(--num-text);
-}
-
-.function {
-	background: var(--fn-bg);
-	color: var(--fn-text);
-}
-
-.operator {
-	background: var(--op-bg);
-	color: var(--op-text);
-}
-
-.eval {
-	background: var(--eval-bg);
-	color: var(--eval-text);
-}
-
-.rotate-type {
-	position: relative;
+.history-item-ok {
 	display: flex;
+	flex-direction: row;
 
-	width: 100%;
+	color: var(--g-history-item-ok);
 }
 
-.rotate-radians, .rotate-degrees {
-	width: 50%;
-	height: 100%;
+.history-item-ok > pre {
+	padding: 1em 0;
+	margin: 0;
+}
 
+.history-item-ok > *:first-child {
+	padding-left: 0.5em;
+}
+
+.history-item-error {
+	padding: 0 0.5em;
+
+	color: var(--g-history-item-error);
+
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.history-item-error > pre {
+	padding: 0;
+	margin: 1em 0;
+}
+
+/* Non-error items */
+.history-item-input {
+	flex-grow: 45;
+	flex-basis: 0;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.history-item-result {
+	flex-grow: 55;
+	flex-basis: 0;
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.history-item-result::before {
+	content: " = ";
+	color: var(--g-history-equals);
+}
+
+.history-item-section-error {
+	border-bottom: 1px solid var(--g-history-error-underline);
+}
+
+.history-item-error:hover, .history-item-input:hover, .history-item-result:hover {
+	background: var(--g-history-item-highlight);
+}
+
+
+/* Input Errors */
+
+#error-input {
+	position: absolute;
+	top: 6px;
+	left: 6px;
+
+	width: 444px;
+	padding: 0.5em 0.6em 0.4em 0.6em;
+
+	text-align: right;
+	font-size: 15px;
+	font-family: monospace;
+	letter-spacing: 1.6px;
+	color: Transparent;
+
+	user-select: none;
+}
+
+#error-input[data-active="true"] {
+	pointer-events: all;
+}
+
+#error-input[data-active="false"] {
+	pointer-events: none;
+}
+
+#error-input > pre {
+	display: inline-block;
+	margin: 0;
+}
+
+.section-text {
+	cursor: default;
+}
+
+.section-error {
+	border-bottom: 1px solid var(--g-error-underline);
 	cursor: pointer;
 }
 
-.rotate-radians {
-	float: left;
-}
-.rotate-type .selected {
-	color: var(--text-active);
+#error-input[data-active="true"] > .section-error {
+	background: var(--g-error-highlight);
 }
 
-.rotate-degrees {
-	float: right;
-}
 
-.rotate-bar {
+#error-message {
 	position: absolute;
+	margin: 0;
+	padding: 0.5em 0.6em;
 
-	top: 0;
-	left: calc(50% - 1px);
+	color: var(--g-error-message-fg);
+	font-size: 15px;
+	letter-spacing: 1.4px;
 
+	background: var(--g-error-message-bg);
+	backdrop-filter: blur(2px);
+	border-radius: 3px;
+}
+
+#error-message > span {
+	margin: 0;
+	padding: 0;
+}
+
+
+/* Buttons */
+
+#button-area {
+	display: grid;
+	grid-auto-rows: 40px;
+	grid-template-columns: repeat(7, 62px);
+	gap: 5px;
+
+	user-select: none;
+}
+
+#button-area button {
+	font-size: 15px;
+
+	border: none;
+	border-radius: var(--g-button-radius);
+}
+
+
+/* Specific button styling */
+
+#angle-mode {
+	grid-column: 1 / 3;
+
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+
+	padding: 0 0 1px 0;
+}
+
+#angle-mode > span {
+	display: block;
+}
+
+#angle-mode[data-mode="Rad"] span:first-child {
+	color: var(--g-angle-mode-active);
+}
+
+#angle-mode[data-mode="Deg"] span:last-child {
+	color: var(--g-angle-mode-active);
+}
+
+#angle-mode > div {
 	width: 2px;
-	height: 100%;
+	height: 1.2em;
+	background: var(--g-angle-mode-bar);
+}
 
-	background: grey;
+
+.modifier[name="inv"][data-active="true"] {
+	color: var(--g-invert-active);
+}
+
+
+/* General button styling */
+
+.modifier {
+	color: var(--g-btn-modifier-fg);
+	background: var(--g-btn-modifier-bg);
+}
+
+.function {
+	color: var(--g-btn-function-fg);
+	background: var(--g-btn-function-bg);
+}
+
+.number {
+	color: var(--g-btn-number-fg);
+	background: var(--g-btn-number-bg);
+}
+
+.operator {
+	color: var(--g-btn-operator-fg);
+	background: var(--g-btn-operator-bg);
+}
+
+.constant {
+	color: var(--g-btn-constant-fg);
+	background: var(--g-btn-constant-bg);
+}
+
+#button-equals {
+	color: var(--g-btn-equals-fg);
+	background: var(--g-btn-equals-bg);
 }
