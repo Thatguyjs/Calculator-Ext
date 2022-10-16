@@ -11,3 +11,6 @@ old/
 
 # Promo images
 /promo
+
+# Package builds
+/build
