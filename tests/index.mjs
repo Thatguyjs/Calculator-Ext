@@ -97,6 +97,9 @@ test("gcd(6, 9)", "3");
 test("gcf(0, 4)", "4");
 test("gcd(4, 0)", "4");
 test("gcf(230, 590)", "10");
+test("root(16, 2)", "4");
+test("root(4^3, 3)", "4");
+test("root(125, -3)", "0.2");
 
 // Macros
 test("hex(ff)", "255");

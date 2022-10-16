@@ -37,6 +37,8 @@ Sum a range of numbers, inclusive
 Square root of `x`
 #### cbrt(x)
 Cube root of `x`
+#### root(val, root)
+Calculates an arbitrary root of `val`
 #### floor(x)
 Round `x` down to the nearest integer
 #### round(x)

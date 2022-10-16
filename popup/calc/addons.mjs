@@ -133,6 +133,9 @@ const addons = {
 
 		sqrt: Math.sqrt,
 		cbrt: Math.cbrt,
+		root: (value, root) => {
+			return Math.pow(value, 1 / root);
+		},
 
 		floor: Math.floor,
 		round: Math.round,
