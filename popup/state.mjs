@@ -24,7 +24,7 @@ const State = {
 	async load_state() {
 		return new Promise(res => {
 			this.storage.local.get(['active', 'angle'], data => {
-				Input.value = data.active ?? '';
+				Input.value = data.active ?? ''; // Directly set this, it doesn't need to be saved
 				this.angle_toggle.setAttribute('data-mode', data.angle ?? 'Rad');
 
 				res();

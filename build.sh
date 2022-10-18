@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-
+echo "Building..."
 
 if [ ! -d ./build ]; then
 	mkdir ./build
@@ -16,3 +16,5 @@ cp -r ./background ./build
 cp -r ./popup ./build
 cp -r ./icons/*.png ./build/icons
 cp -r ./Calc-JS/src ./build/Calc-JS
+
+echo "Build Complete!"
