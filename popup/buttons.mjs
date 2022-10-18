@@ -10,6 +10,7 @@ import HistoryStorage from "./history/storage.mjs";
 const Buttons = {
 	equals_btn: el('#button-equals'),
 	angle_mode_btn: el('#angle-mode'),
+	clear_btn: el('#clear'),
 	buttons: {
 		modifiers: els_arr('.modifier'),
 		operators: els_arr('.operator'),
@@ -23,13 +24,24 @@ const Buttons = {
 
 
 	init() {
+		Input.on('update', data => {
+			if(data.length === 0) {
+				this.clear_btn.setAttribute('data-mode', "clear");
+				this.clear_btn.innerText = "C";
+			}
+			else {
+				this.clear_btn.setAttribute('data-mode', "clear-entry");
+				this.clear_btn.innerText = "CE";
+			}
+		});
+
 		this.equals_btn.addEventListener('click', () => {
-			if(this._eval_cb) this._eval_cb(Input.value);
+			this._do_eval();
 		});
 
 		window.addEventListener('keydown', ev => {
-			if(ev.code === 'Enter' && this._eval_cb)
-				this._eval_cb(Input.value);
+			if(ev.code === 'Enter')
+				this._do_eval();
 			else if(ev.code === 'Backspace' && ev.shiftKey)
 				Input.value = "";
 		});
@@ -105,8 +117,11 @@ const Buttons = {
 				}
 			}
 		}
-		else if(button.innerText === "CE") {
+		else if(button.getAttribute('data-mode') === "clear-entry") {
 			Input.value = Input.value.slice(0, -1);
+		}
+		else if(button.getAttribute('data-mode') === "clear") {
+			Input.value = "";
 		}
 		else if(button.innerText === "Ans") {
 			const last = await HistoryStorage.last();
@@ -138,6 +153,16 @@ const Buttons = {
 		if(!this._can_click(ev)) return;
 
 		Input.append(button.innerText);
+	},
+
+
+	// Called when 'Enter' is pressed or the Equals button is clicked
+	_do_eval() {
+		if(this._eval_cb)
+			this._eval_cb(Input.value);
+
+		this.clear_btn.setAttribute('data-mode', "clear");
+		this.clear_btn.innerText = "C";
 	},
 
 
