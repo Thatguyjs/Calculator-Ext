@@ -1,19 +1,23 @@
 // Manage the calculator input field, so all input can be processed
 
 import { el } from "./common/element.mjs";
+import EventEmitter from "./common/events.mjs";
 
 import HistoryStorage from "./history/storage.mjs";
 
 
-const Input = {
-	element: el('#input'),
-	_listeners: {},
+const Input = new class extends EventEmitter {
+	constructor() {
+		super();
 
-	// Used for history navigation by arrow keys
-	state: {
-		index: 0, // 0 = current, 1..25 = history entry
-		current: "" // Current calculator value
-	},
+		this.element = el('#input');
+
+		// Used for history navigation by arrow keys
+		this.state = {
+			index: 0, // 0 = current, 1..25 = history entry
+			current: "" // Current calculator value
+		};
+	}
 
 
 	init() {
@@ -52,39 +56,26 @@ const Input = {
 			if(this.state.index === 0)
 				this.state.current = value;
 		});
-	},
+	}
 
 
 	set_value(value="") {
 		this.element.value = value;
 		this.emit('update', this.element.value);
-	},
+	}
 
 	get value() {
 		return this.element.value;
-	},
+	}
 
 	set value(value) {
 		this.set_value(value);
-	},
+	}
 
 	append(value) {
 		this.set_value(this.value + value);
-	},
-
-
-	on(event, callback) {
-		if(!(event in this._listeners))
-			this._listeners[event] = [];
-
-		this._listeners[event].push(callback);
-	},
-
-	emit(event, ...args) {
-		for(let l in this._listeners[event])
-			this._listeners[event][l](...args);
 	}
-};
+}();
 
 
 export default Input;

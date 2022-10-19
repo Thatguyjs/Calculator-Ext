@@ -11,7 +11,7 @@ Input.init();
 
 Calc.set_elements(el('#error-input'), el('#error-message'));
 
-Buttons.on_eval(text => {
+Buttons.on('eval', text => {
 	CalcHistory.handle_result(text, Calc.eval_and_display(text));
 });
 

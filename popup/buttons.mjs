@@ -1,26 +1,30 @@
 // Button / Key handling
 
 import { el, els_arr } from "./common/element.mjs";
+import EventEmitter from "./common/events.mjs";
+
 import Input from "./input.mjs";
 
 import ErrorDisplay from "./calc/errors.mjs";
 import HistoryStorage from "./history/storage.mjs";
 
 
-const Buttons = {
-	equals_btn: el('#button-equals'),
-	angle_mode_btn: el('#angle-mode'),
-	clear_btn: el('#clear'),
-	buttons: {
-		modifiers: els_arr('.modifier'),
-		operators: els_arr('.operator'),
-		functions: els_arr('.function'),
-		constants: els_arr('.constant'),
-		numbers: els_arr('.number')
-	},
+const Buttons = new class extends EventEmitter {
+	constructor() {
+		super();
 
-	_angle_mode_cb: null,
-	_eval_cb: null,
+		this.equals_btn = el('#button-equals');
+		this.angle_mode_btn = el('#angle-mode');
+		this.clear_btn = el('#clear');
+
+		this.buttons = {
+			modifiers: els_arr('.modifier'),
+			operators: els_arr('.operator'),
+			functions: els_arr('.function'),
+			constants: els_arr('.constant'),
+			numbers: els_arr('.number')
+		};
+	}
 
 
 	init() {
@@ -62,7 +66,7 @@ const Buttons = {
 
 		for(let btn of this.buttons.numbers)
 			btn.addEventListener('mousedown', this._click_number.bind(this, btn));
-	},
+	}
 
 
 	// Only allow left clicks
@@ -77,7 +81,7 @@ const Buttons = {
 			ErrorDisplay.clear_display();
 
 		return true;
-	},
+	}
 
 	async _click_modifier(button, ev) {
 		if(!this._can_click(ev)) return;
@@ -85,8 +89,7 @@ const Buttons = {
 		if(button.id === "angle-mode") {
 			button.setAttribute('data-mode', button.getAttribute('data-mode') === "Deg" ? "Rad" : "Deg");
 
-			if(this._angle_mode_cb)
-				this._angle_mode_cb(this.get_angle_mode());
+			this.emit('angle_toggle', this.get_angle_mode());
 		}
 		else if(button.innerText === "Inv") {
 			button.setAttribute('data-active', button.getAttribute('data-active') === "false" ? "true" : "false");
@@ -129,55 +132,46 @@ const Buttons = {
 
 			Input.value += last.result.values.join(', ');
 		}
-	},
+	}
 
 	_click_operator(button, ev) {
 		if(!this._can_click(ev)) return;
 
 		Input.append(button.name || button.innerText);
-	},
+	}
 
 	_click_function(button, ev) {
 		if(!this._can_click(ev)) return;
 
 		Input.append((button.name || button.innerText) + '(');
-	},
+	}
 
 	_click_constant(button, ev) {
 		if(!this._can_click(ev)) return;
 
 		Input.append(button.name);
-	},
+	}
 
 	_click_number(button, ev) {
 		if(!this._can_click(ev)) return;
 
 		Input.append(button.innerText);
-	},
+	}
 
 
 	// Called when 'Enter' is pressed or the Equals button is clicked
 	_do_eval() {
-		if(this._eval_cb)
-			this._eval_cb(Input.value);
+		this.emit('eval', Input.value);
 
 		this.clear_btn.setAttribute('data-mode', "clear");
 		this.clear_btn.innerText = "C";
-	},
+	}
 
 
 	get_angle_mode(fallback="Rad") {
 		return this.angle_mode_btn?.getAttribute('data-mode') ?? fallback;
-	},
-
-	on_angle_mode_change(callback) {
-		this._angle_mode_cb = callback;
-	},
-
-	on_eval(callback) {
-		this._eval_cb = callback;
 	}
-};
+}();
 
 
 Buttons.init();
